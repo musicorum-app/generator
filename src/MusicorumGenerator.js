@@ -1,23 +1,15 @@
 require('dotenv').config()
-const { MiscUtils, App } = require('./')
-const LFM = require('last-fm')
+const { App, LastFM } = require('./')
+const themes = require('./themes/')
 
 module.exports = class MusicorumGenerator {
   init () {
-    this.loadThemes()
-    this.themes = []
-    this.app = new App(process.env.PORT)
+    this.themes = themes
+    this.app = new App(this, process.env.PORT)
+    this.setupApis()
   }
 
   setupApis () {
-    this.lastfm = new LFM(process.env.LASTFM_KEY, { userAgent: 'MusicorumGenerator/1.0.0 (http://musicorum.xyz)' })
-  }
-
-  loadThemes () {
-    const themes = MiscUtils.readdir('./src/themes')
-
-    for (const Theme in themes) {
-      this.themes.push(new Theme(this))
-    }
+    this.lastfm = new LastFM(process.env.LASTFM_KEY)
   }
 }

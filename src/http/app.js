@@ -2,19 +2,21 @@ const chalk = require('chalk')
 const morgan = require('morgan')
 const express = require('express')
 const app = express()
-const routers = require('./routers.js')
+const Routers = require('./routers.js')
 
 module.exports = class App {
-  constructor (port) {
+  constructor (musicorum, port) {
+    this.musicorum = musicorum
     this.port = port
     this.init()
   }
 
   init () {
+    const routers = new Routers(this.musicorum)
     app.use(express.json())
     app.use(morgan((t, q, s) => this.morganPattern(t, q, s)))
     // app.use(morgan(':method :url'))
-    app.use(routers)
+    app.use(routers.router)
     app.listen(this.port, () =>
       console.log(chalk.greenBright(' SUCCESS ') + ' Web server started on port ' + chalk.blue(this.port)))
   }

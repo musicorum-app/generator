@@ -1,8 +1,27 @@
 const { Router } = require('express')
 const router = Router()
 
-router.all('/', (req, res) => {
-  res.json({ status: 'OK' })
-})
+module.exports = class Routers {
+  constructor (musicorum) {
+    this.musicorum = musicorum
+    this.routers()
+  }
 
-module.exports = router
+  routers () {
+    router.all('/', (req, res) => {
+      res.json({ status: 'OK' })
+    })
+
+    router.post('/generate', async (req, res) => {
+      res.set({ 'Content-Type': 'image/png' })
+      res.status(200)
+      const { theme, options } = req.body
+      const img = await this.musicorum.themes[theme]({ musicorum: this.musicorum }, options)
+      img.pngStream().pipe(res)
+    })
+  }
+
+  get router () {
+    return router
+  }
+}
