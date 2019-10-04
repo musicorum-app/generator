@@ -10,7 +10,7 @@ module.exports = class MusicorumGenerator {
   }
 
   setupApis () {
-    this.lastfm = new LFM(process.env.LASTFM_KEY, { userAgent: 'MusicorumGenerator/1.0.0 (http://musicorum.com)' })
+    this.lastfm = new LFM(process.env.LASTFM_KEY, { userAgent: 'MusicorumGenerator/1.0.0 (http://musicorum.xyz)' })
   }
 
   loadThemes () {
