@@ -56,6 +56,7 @@ module.exports = class LastFM {
     if (type === 'tracks') {
       query = `${encodeURIComponent(item.name)}%20artist:${encodeURIComponent(item.artist.name)}`
     }
+    // TODO: fix undefined for artists(it searched for the "undefined" band lmaoo)
     const search = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=${type}&q=${query}`)
     // const search = await musicorum.spotify.request({ type: , query })
     const results = search.tracks || search.artists
