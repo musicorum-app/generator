@@ -102,6 +102,7 @@ module.exports = class CanvasUtils {
 
   static async loadCachedImage (url) {
     const fileName = url.replace(/\//g, '_').replace(/:/g, '_')
+    // TODO: Spotify urls
     const pathName = path.resolve(__dirname, '..', '..', 'cache', fileName)
     return loadImage(pathName)
       .then(i => i)
