@@ -44,11 +44,11 @@ module.exports = async (context, data) => {
   ctx.fillStyle = 'rgb(255, 255, 255)'
   const TITLE_W = ctx.measureText(messages.title).width
   ctx.fillText(messages.title, CENTER_X - (TITLE_W / 2), 40)
-  
+
   ctx.font = 'bold 25px "Roboto"'
   const NAME_W = ctx.measureText(userInfo.realname || user).width
   ctx.fillText(userInfo.realname || user, CENTER_X - (NAME_W / 2), AVATAR_Y + AVATAR_SIZE + 30)
-  
+
   ctx.font = '20px "RobotoCondensed Light"'
   ctx.fillStyle = 'rgba(255, 255, 255, .6)'
   const USERNAME_W = ctx.measureText('@' + user).width
@@ -70,13 +70,12 @@ module.exports = async (context, data) => {
   const COVER_Y = 80
   const COVER_MARGIN = COVER_Y + COVER_SIZE + 25
 
-
   for (let t = 0; t < lists.length; t++) {
     const list = lists[t]
     const X_MODULE_CENTER = WIDTH / 2 + (t === 1 ? MODULE_INNER_MARGIN : -Math.abs(MODULE_INNER_MARGIN))
     const COVER_X = X_MODULE_CENTER - COVER_SIZE / 2
-    
-    const img = await loadImage(LastFM.getBestImage(list[0].image, 300))
+
+    const img = await CanvasUtils.loadCachedImage(LastFM.getBestImage(list[0].image, 300))
     ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
 
     ctx.font = '15px "RobotoCondensed Light"'

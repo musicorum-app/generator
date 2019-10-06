@@ -7,3 +7,4 @@ module.exports = class MiscUtils {
 
 module.exports.readdir = promisify(fs.readdir)
 module.exports.readFile = promisify(fs.readFile)
+module.exports.writeFile = promisify(fs.writeFile)

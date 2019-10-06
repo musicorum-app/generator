@@ -1,5 +1,5 @@
 const { CanvasUtils, LastFM } = require('../')
-const { createCanvas, loadImage } = require('canvas')
+const { createCanvas } = require('canvas')
 
 CanvasUtils.init()
 CanvasUtils.registerFonts()
@@ -70,7 +70,7 @@ module.exports = async (context, data) => {
   }
 
   // Images
-  const images = await Promise.all(list.slice(0, SIZE * SIZE).filter(i => i.image[0]['#text']).map(i => loadImage(LastFM.getBestImage(i.image, 300))))
+  const images = await Promise.all(list.slice(0, SIZE * SIZE).filter(i => i.image[0]['#text']).map(i => CanvasUtils.loadCachedImage(LastFM.getBestImage(i.image, 300))))
 
   ctx.globalCompositeOperation = 'destination-over'
   POS = 0

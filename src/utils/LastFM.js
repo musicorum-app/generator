@@ -35,7 +35,6 @@ module.exports = class LastFM {
       .map(i => i.playcount)
       .reduce((a, b) => Number(a) + Number(b))
     const precise = list['@attr'].totalPages === '1'
-    console.log(list['@attr'])
     if (!precise) {
       playcount += Number(list['@attr'].total) - Number(list['@attr'].perPage)
     }
@@ -48,7 +47,6 @@ module.exports = class LastFM {
   }
 
   static getBestImage (images, size) {
-    console.log(images[0]['#text'].replace(REGEX, `/${size}x${size}/`))
     return images[0]['#text'].replace(REGEX, `/${size}x${size}/`)
   }
 }

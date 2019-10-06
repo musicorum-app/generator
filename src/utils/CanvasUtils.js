@@ -1,7 +1,13 @@
-const { createCanvas, registerFont, Context2d, Canvas } = require('canvas')
+const { createCanvas, registerFont, Context2d, Canvas, loadImage } = require('canvas')
+const fetch = require('node-fetch')
+const fs = require('fs')
+const { promisify } = require('util')
+const chalk = require('chalk')
 const path = require('path')
 
 const ASSETS_SRC = path.resolve(__dirname, '..', 'assets')
+
+const writeFile = promisify(fs.writeFile)
 
 module.exports = class CanvasUtils {
   static init () {
@@ -91,6 +97,31 @@ module.exports = class CanvasUtils {
     Context2d.prototype.roundImage = function (img, x, y, w, h, r) {
       this.drawImage(this.roundImageCanvas(img, w, h, r), x, y, w, h)
       return this
+    }
+  }
+
+  static async loadCachedImage (url) {
+    const fileName = url.replace(/\//g, '_').replace(/:/g, '_')
+    const pathName = path.resolve(__dirname, '..', '..', 'cache', fileName)
+    return loadImage(pathName)
+      .then(i => i)
+      .catch(async () => {
+        console.log(chalk.yellow(' DOWNLOADING IMAGE ') + 'from ' + url)
+        const res = await fetch(url)
+        const buffer = await res.buffer()
+        CanvasUtils.saveImage(buffer, pathName)
+        return loadImage(buffer)
+      })
+  }
+
+  static saveImage (buffer, filePath) {
+    // console.log(chalk.cyan(' SAVING CACHE ') + 'at ' + filePath)
+
+    try {
+      writeFile(filePath, buffer)
+      console.log(chalk.green(' CACHE SAVED ') + 'at ' + filePath)
+    } catch (e) {
+      console.log(chalk.red(' CACHE ERROR: ' + e))
     }
   }
 
