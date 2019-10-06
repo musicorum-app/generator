@@ -67,7 +67,7 @@ module.exports = async (context, data) => {
   const MODULE_INNER_MARGIN = WIDTH * 0.35
 
   const COVER_SIZE = 120
-  const COVER_Y = 80
+  const COVER_Y = HEIGHT / 2 - COVER_SIZE / 2
   const COVER_MARGIN = COVER_Y + COVER_SIZE + 25
 
   for (let t = 0; t < lists.length; t++) {
@@ -75,7 +75,9 @@ module.exports = async (context, data) => {
     const X_MODULE_CENTER = WIDTH / 2 + (t === 1 ? MODULE_INNER_MARGIN : -Math.abs(MODULE_INNER_MARGIN))
     const COVER_X = X_MODULE_CENTER - COVER_SIZE / 2
 
-    const img = await CanvasUtils.loadCachedImage(LastFM.getBestImage(list[0].image, 300))
+    const type = modules[t].type.slice(0, -1)
+    const img = await CanvasUtils.loadCachedImage(await musicorum.lastfm.getImageURLFromSpotify(list, type))
+
     ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
 
     ctx.font = '15px "RobotoCondensed Light"'
@@ -107,6 +109,21 @@ module.exports = async (context, data) => {
     const PLAYCOUNT_X = COVER_X + COVER_SIZE - ctx.measureText(PLAYCOUNT).width - 5
     const PLAYCOUNT_Y = COVER_Y + COVER_SIZE - 5
     ctx.fillText(PLAYCOUNT, PLAYCOUNT_X, PLAYCOUNT_Y)
+
+    // const TOP_LIST_MARGIN = 80
+
+    // ctx.font = '13px "RobotoCondensed"'
+    // ctx.fillStyle = 'rgba(255, 255, 255, .7)'
+
+    // const texts = list.slice(1, 5).map((l, i) => `${i + 2}. ${l.name}`)
+    // const highest = texts.reduce((a, b) => a.length > b.length ? a : b)
+    // for (let i = 0; i < texts.length; i++) {
+    //   const text = texts[i]
+
+    //   const LIST_ITEM_X = X_MODULE_CENTER - (ctx.measureText(highest).width / 2)
+    //   const LIST_ITEM_Y = COVER_Y + COVER_SIZE + TOP_LIST_MARGIN + 16 * i
+    //   ctx.fillText(text, LIST_ITEM_X, LIST_ITEM_Y)
+    // }
   }
 
   const [avatar] = await Promise.all([

@@ -1,6 +1,7 @@
 require('dotenv').config()
 const { App, LastFM } = require('./')
 const themes = require('./themes/')
+const Spotify = require('node-spotify-api')
 
 module.exports = class MusicorumGenerator {
   init () {
@@ -10,6 +11,10 @@ module.exports = class MusicorumGenerator {
   }
 
   setupApis () {
-    this.lastfm = new LastFM(process.env.LASTFM_KEY)
+    this.lastfm = new LastFM(this, process.env.LASTFM_KEY)
+    this.spotify = new Spotify({
+      id: process.env.SPOTIFY_ID,
+      secret: process.env.SPOTIFY_SECRET
+    })
   }
 }

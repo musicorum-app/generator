@@ -3,7 +3,8 @@ const fetch = require('node-fetch')
 const REGEX = /\/([0-9sx]+)\//g
 
 module.exports = class LastFM {
-  constructor (apiKey) {
+  constructor (musicorum, apiKey) {
+    this.musicorum = musicorum
     this.apiKey = apiKey
   }
 
@@ -48,5 +49,19 @@ module.exports = class LastFM {
 
   static getBestImage (images, size) {
     return images[0]['#text'].replace(REGEX, `/${size}x${size}/`)
+  }
+
+  async getImageURLFromSpotify (item, type) {
+    let query = item.name
+    if (type === 'tracks') {
+      query = `${encodeURIComponent(item.name)}%20artist:${encodeURIComponent(item.artist.name)}`
+    }
+    const search = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=${type}&q=${query}`)
+    // const search = await musicorum.spotify.request({ type: , query })
+    const results = search.tracks || search.artists
+    if (!results || results.items.length === 0) {
+      return 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'
+    }
+    return (results.items[0].album || results.items[0]).images[1].url
   }
 }
