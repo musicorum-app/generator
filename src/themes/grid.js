@@ -12,7 +12,6 @@ module.exports = async (context, data) => {
   list = list.album || list.track || list.artist
   const canvas = createCanvas(900, 900)
   const ctx = canvas.getContext('2d')
-  console.log(list)
 
   const SIZE = data.size < 3 || data.size > 6 ? 3 : data.size
   const COVER_SIZE = canvas.width / SIZE
