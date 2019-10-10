@@ -13,6 +13,7 @@ module.exports = class Routers {
     })
 
     router.post('/generate', async (req, res) => {
+      // TODO: Snapshot cache system
       res.set({ 'Content-Type': 'image/png' })
       res.status(200)
       const { theme, options } = req.body
