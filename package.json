@@ -4,6 +4,7 @@
   "description": "Image generator for the Musicurum project",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "start-dev": "nodemon --exec node -r dotenv/config index.js"
   },
   "author": "metehus",
