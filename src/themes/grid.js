@@ -15,6 +15,7 @@ module.exports = async (context, data) => {
     if (!period) period = '1month'
     const topList = await musicorum.lastfm.getUserTop(user, top, period, 40)
     let list = topList.topalbums || topList.topartists || topList.toptracks
+    if (!list) throw new ResponseError(404, responses.USER_NOT_FOUND)
     list = list.album || list.track || list.artist
     const canvas = createCanvas(900, 900)
     const ctx = canvas.getContext('2d')
@@ -86,9 +87,6 @@ module.exports = async (context, data) => {
     for (let i = 0; i < SIZE; i++) {
       for (let j = 0; j < SIZE; j++) {
         const img = images[POS]
-        if (!img) {
-          break
-        }
         const X = j * COVER_SIZE
         const Y = i * COVER_SIZE
 
@@ -105,6 +103,7 @@ module.exports = async (context, data) => {
 
     return canvas
   } catch (e) {
+    if (e instanceof ResponseError) throw e
     console.error(e)
     throw new ResponseError(500, responses.GENERIC_ERROR)
   }

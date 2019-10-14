@@ -45,5 +45,13 @@ module.exports = {
       message: 'Method not allowed.',
       error: 'METHOD_NOT_ALLOWED'
     }
+  },
+
+  USER_NOT_FOUND: {
+    error: {
+      code: 'G#404#007',
+      message: 'User not found.',
+      error: 'USER_NOT_FOUND'
+    }
   }
 }
