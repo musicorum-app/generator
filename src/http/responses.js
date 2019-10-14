@@ -37,5 +37,13 @@ module.exports = {
       message: 'An unexpected error ocorrured.',
       error: 'GENERIC_ERROR'
     }
+  },
+
+  METHOD_NOT_ALLOWED: {
+    error: {
+      code: 'G#405#006',
+      message: 'Method not allowed.',
+      error: 'METHOD_NOT_ALLOWED'
+    }
   }
 }
