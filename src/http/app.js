@@ -1,6 +1,7 @@
 const chalk = require('chalk')
 const morgan = require('morgan')
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const Routers = require('./routers.js')
 
@@ -14,6 +15,7 @@ module.exports = class App {
   init () {
     const routers = new Routers(this.musicorum)
     app.use(express.json())
+    app.use(cors())
     app.use(morgan((t, q, s) => this.morganPattern(t, q, s)))
     // app.use(morgan(':method :url'))
     app.use(routers.router)

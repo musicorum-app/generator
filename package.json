@@ -9,13 +9,14 @@
   },
   "author": "metehus",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/musicorum-app/generator.git"
+    "type": "git",
+    "url": "https://github.com/musicorum-app/generator.git"
   },
   "license": "GPL-3.0",
   "dependencies": {
     "canvas": "^2.6.0",
     "chalk": "^2.4.2",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
