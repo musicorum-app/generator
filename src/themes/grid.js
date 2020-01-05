@@ -17,7 +17,7 @@ module.exports = async (context, data) => {
     let list = topList.topalbums || topList.topartists || topList.toptracks
     if (!list) throw new ResponseError(404, responses.USER_NOT_FOUND)
     list = list.album || list.track || list.artist
-    const canvas = createCanvas(900, 900)
+    const canvas = createCanvas(1000, 1000)
     const ctx = canvas.getContext('2d')
 
     const SIZE = data.size < 3 || data.size > 6 ? 3 : data.size
@@ -80,7 +80,14 @@ module.exports = async (context, data) => {
     }
 
     // Images
-    const images = await Promise.all(list.slice(0, SIZE * SIZE).filter(i => i.image[0]['#text']).map(i => CanvasUtils.loadCachedImage(LastFM.getBestImage(i.image, 300))))
+    const filter = async i => {
+      if (top === 'albums') {
+        return CanvasUtils.loadCachedImage(LastFM.getBestImage(i.image[0]['#text'].image, 300))
+      } else {
+        return CanvasUtils.loadCachedImage(await musicorum.lastfm.getImageURLFromSpotify([i], top.slice(0, -1)))
+      }
+    }
+    const images = await Promise.all(list.slice(0, SIZE * SIZE).map(filter))
 
     ctx.globalCompositeOperation = 'destination-over'
     POS = 0
