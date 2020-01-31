@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const chalk = require('chalk')
 
 const REGEX = /\/([0-9sx]+)\//g
 
@@ -6,11 +7,21 @@ module.exports = class LastFM {
   constructor (musicorum, apiKey) {
     this.musicorum = musicorum
     this.apiKey = apiKey
+    this.cache = {
+      artists: [],
+      albums: [],
+      tracks: []
+    }
   }
 
   async getUserTop (user, top, period, limit) {
     const params = { user, period, limit }
     return this.request('user.gettop' + top, params)
+  }
+
+  async getRecentTracks (user, from, to, extended, limit = 50) {
+    extended = extended ? 1 : 0
+    return this.request('user.getRecentTracks', { user, from, to, extended, limit })
   }
 
   async getList (user, top, period, limit) {
@@ -24,22 +35,27 @@ module.exports = class LastFM {
     return this.request('user.getInfo', { user })
   }
 
-  async getTotalScrobbles (user, top, period) {
+  async getTotalScrobblesFromTimestamp (user, from, to) {
+    const { recenttracks } = await this.getRecentTracks(user, from, to, false, 1)
+    return recenttracks['@attr'].total
+  }
+
+  async getTotalScrobbles (user, period) {
     if (period === 'overall') {
       const playcount = await this.getUserInfo(user).then(u => u.user.playcount)
       return { precise: true, playcount }
     }
 
-    const topList = await this.getUserTop(user, top, period, period === '12month' ? 500 : 300)
-    const list = topList.topalbums || topList.topartists || topList.toptracks
-    let playcount = (list.album || list.track || list.artist)
-      .map(i => i.playcount)
-      .reduce((a, b) => Number(a) + Number(b))
-    const precise = list['@attr'].totalPages === '1'
-    if (!precise) {
-      playcount += Number(list['@attr'].total) - Number(list['@attr'].perPage)
+    const seconds = {
+      '7day': 604800,
+      '1month': 2592000,
+      '3month': 7776000,
+      '6month': 15552000,
+      '12month': 31536000
     }
-    return { precise, playcount }
+
+    const now = Math.floor(new Date().getTime() / 1000)
+    return this.getTotalScrobblesFromTimestamp(user, now - seconds[period], now)
   }
 
   async request (method, params) {
@@ -48,24 +64,58 @@ module.exports = class LastFM {
   }
 
   static getBestImage (images, size) {
-    return images[0]['#text'].replace(REGEX, `/${size}x${size}/`)
+    let url = 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'
+    if (images) {
+      if (images[0]) {
+        url = images[0]['#text']
+      }
+    }
+    return url.replace(REGEX, `/${size}x${size}/`)
   }
 
   async getImageURLFromSpotify ([item], type) {
+    const imageFromCache = await this.getDataCache(item, type)
+
+    if (imageFromCache) return imageFromCache.image
+
     let query = item.name
     if (type === 'tracks') {
       query = `${encodeURIComponent(item.name)}%20artist:${encodeURIComponent(item.artist.name)}`
     }
-    const search = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=${type}&q=${query}`)
+    console.log(chalk.green(' REQUESTING TO SPOTIFY ') + `query: ${query}`)
+    const search = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=${type.slice(0, -1)}&q=${query}`)
     // const search = await musicorum.spotify.request({ type: , query })
     const results = search.tracks || search.artists || search.albums
     if (!results || results.items.length === 0) {
+      this.saveCacheData(item, type, 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png')
       return 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'
     }
     const res = (results.items[0].album || results.items[0])
     if (!res.images.length) {
+      this.saveCacheData(item, type, 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png')
       return 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'
     }
+
+    this.saveCacheData(item, type, res.images[1].url)
     return res.images[1].url
+  }
+
+  async saveCacheData (item, type, image) {
+    const obj = {
+      name: item.name,
+      image
+    }
+    if (type === 'tracks' || type === 'albums') obj.artist = item.artist.name
+
+    this.cache[type].push(obj)
+  }
+
+  async getDataCache (item, type) {
+    let list = this.cache[type]
+
+    list = list.filter(i => i.name === item.name)
+    if (type === 'tracks' || type === 'albums') list = list.filter(i => i.artist === item.artist.name)
+
+    return !list.length ? null : list[0]
   }
 }

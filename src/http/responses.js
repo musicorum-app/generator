@@ -23,9 +23,17 @@ module.exports = {
     }
   },
 
-  INVALID_PARAMS: {
+  MISSING_USER: {
     error: {
       code: 'G#400#004',
+      message: 'Missing user.',
+      error: 'MISSING_USER'
+    }
+  },
+
+  INVALID_PARAMS: {
+    error: {
+      code: 'G#400#005',
       message: 'Invalid parameters.',
       error: 'INVALID_PARAMS'
     }
@@ -33,7 +41,7 @@ module.exports = {
 
   GENERIC_ERROR: {
     error: {
-      code: 'G#500#005',
+      code: 'G#500#006',
       message: 'An unexpected error ocorrured.',
       error: 'GENERIC_ERROR'
     }
@@ -41,7 +49,7 @@ module.exports = {
 
   METHOD_NOT_ALLOWED: {
     error: {
-      code: 'G#405#006',
+      code: 'G#405#007',
       message: 'Method not allowed.',
       error: 'METHOD_NOT_ALLOWED'
     }
@@ -49,7 +57,7 @@ module.exports = {
 
   USER_NOT_FOUND: {
     error: {
-      code: 'G#404#007',
+      code: 'G#404#008',
       message: 'User not found.',
       error: 'USER_NOT_FOUND'
     }

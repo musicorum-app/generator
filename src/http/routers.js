@@ -1,9 +1,8 @@
 const { Router } = require('express')
 const responses = require('./responses.js')
+const ResponseError = require('./ResponseError.js')
 const router = Router()
 const sharp = require('sharp')
-
-const sharper = sharp().webp()
 
 module.exports = class Routers {
   constructor (musicorum) {
@@ -27,14 +26,15 @@ module.exports = class Routers {
         const start = new Date()
         console.log('STARTING IMAGE GENERATION FOR THEME ' + theme)
         try {
-          const img = await this.musicorum.themes[theme]({ musicorum: this.musicorum }, options)
+          const img = await this.musicorum.themes[theme].preGenerate(options)
           res.set({ 'Content-Type': 'image/webp' })
           img.pngStream().pipe(sharp().webp()).pipe(res)
           console.log('IMAGE GENERATION ENDED SUCCESSFULLY IN ' + (new Date().getTime() - start.getTime()) + 'ms')
-        } catch (err) {
-          res.status(err.code || 500).json(err.response || err.message)
+        } catch (e) {
+          if (e instanceof ResponseError) res.status(e.code).json(e.response)
+          res.status(500).json(responses.GENERIC_ERROR)
           console.log('IMAGE GENERATION ENDED WITH ERROR IN ' + (new Date().getTime() - start.getTime()) + 'ms')
-          console.error(err)
+          console.error(e)
         }
       })
       .all((_, res) => {

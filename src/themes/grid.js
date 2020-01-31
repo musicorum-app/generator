@@ -1,4 +1,5 @@
 const { CanvasUtils, LastFM } = require('../')
+const Theme = require('./Theme.js')
 const { createCanvas } = require('canvas')
 const responses = require('../http/responses.js')
 const ResponseError = require('../http/ResponseError.js')
@@ -6,24 +7,25 @@ const ResponseError = require('../http/ResponseError.js')
 CanvasUtils.init()
 CanvasUtils.registerFonts()
 
-module.exports = async (context, data) => {
-  try {
-    const { musicorum } = context
-    let { user, top, period, playcount, names } = data
+module.exports = class GridTheme extends Theme {
+  async generate (options) {
+    const lastfm = this.musicorum.lastfm
+
+    let { user, top, period, playcount, names } = options
     if (!user) throw new ResponseError(400, responses.MISSING_PARAMS)
     if (!top) top = 'albums'
     if (!period) period = '1month'
-    const topList = await musicorum.lastfm.getUserTop(user, top, period, 40)
+
+    const topList = await lastfm.getUserTop(user, top, period, 40)
     let list = topList.topalbums || topList.topartists || topList.toptracks
     if (!list) throw new ResponseError(404, responses.USER_NOT_FOUND)
     list = list.album || list.track || list.artist
+
     const canvas = createCanvas(1000, 1000)
     const ctx = canvas.getContext('2d')
 
-    const SIZE = data.size < 3 || data.size > 6 ? 3 : data.size
+    const SIZE = options.size < 3 || options.size > 6 ? 3 : options.size
     const COVER_SIZE = canvas.width / SIZE
-
-    // Text & Gradient
 
     let POS = 0
     for (let i = 0; i < SIZE; i++) {
@@ -82,9 +84,9 @@ module.exports = async (context, data) => {
     // Images
     const filter = async i => {
       if (top === 'albums') {
-        return CanvasUtils.loadCachedImage(LastFM.getBestImage(i.image[0]['#text'].image, 300))
+        return CanvasUtils.loadCachedImage(LastFM.getBestImage(i.image, 300))
       } else {
-        return CanvasUtils.loadCachedImage(await musicorum.lastfm.getImageURLFromSpotify([i], top.slice(0, -1)))
+        return CanvasUtils.loadCachedImage(await lastfm.getImageURLFromSpotify([i], top))
       }
     }
     const images = await Promise.all(list.slice(0, SIZE * SIZE).map(filter))
@@ -109,9 +111,5 @@ module.exports = async (context, data) => {
     }
 
     return canvas
-  } catch (e) {
-    if (e instanceof ResponseError) throw e
-    console.error(e)
-    throw new ResponseError(500, responses.GENERIC_ERROR)
   }
 }
