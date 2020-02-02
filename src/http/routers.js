@@ -27,8 +27,8 @@ module.exports = class Routers {
         console.log('STARTING IMAGE GENERATION FOR THEME ' + theme)
         try {
           const img = await this.musicorum.themes[theme].preGenerate(options)
-          const prefix = 'data:image/webp;base64,'
-          const sharped = await sharp(img.toBuffer()).webp().toBuffer()
+          const prefix = 'data:image/jpeg;base64,'
+          const sharped = await sharp(img.toBuffer()).jpeg().toBuffer()
           const base64 = sharped.toString('base64')
           res.status(200).json({
             duration: (new Date().getTime() - start.getTime()),
