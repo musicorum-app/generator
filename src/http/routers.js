@@ -27,8 +27,15 @@ module.exports = class Routers {
         console.log('STARTING IMAGE GENERATION FOR THEME ' + theme)
         try {
           const img = await this.musicorum.themes[theme].preGenerate(options)
-          res.set({ 'Content-Type': 'image/webp' })
-          img.pngStream().pipe(sharp().webp()).pipe(res)
+          const prefix = 'data:image/webp;base64,'
+          const sharped = await sharp(img.toBuffer()).webp().toBuffer()
+          const base64 = sharped.toString('base64')
+          res.status(200).json({
+            duration: (new Date().getTime() - start.getTime()),
+            base64: prefix + base64
+          })
+          // res.set({ 'Content-Type': 'image/webp' })
+          // img.pngStream().pipe(sharp().webp()).pipe(res)
           console.log('IMAGE GENERATION ENDED SUCCESSFULLY IN ' + (new Date().getTime() - start.getTime()) + 'ms')
         } catch (e) {
           if (e instanceof ResponseError) res.status(e.code).json(e.response)
