@@ -1,7 +1,5 @@
 const responses = require('../http/responses.js')
 const ResponseError = require('../http/ResponseError.js')
-const { createCanvas } = require('canvas')
-const { CanvasUtils, LastFM } = require('../')
 
 module.exports = class Theme {
   constructor (musicorum) {

@@ -13,8 +13,8 @@ module.exports = class Routers {
   routers () {
     router.route('/generate')
       .post(async (req, res) => {
-        // TODO: Snapshot cache system
-        const { theme, options } = req.body
+        const { theme, options, scheduler } = req.body
+        const source = scheduler ? 'SCHEDULER' : 'WEB'
         if (!theme || !options) {
           res.status(400).json(responses.MISSING_PARAMS)
           return
@@ -30,18 +30,22 @@ module.exports = class Routers {
           const prefix = 'data:image/jpeg;base64,'
           const sharped = await sharp(img.toBuffer()).jpeg().toBuffer()
           const base64 = sharped.toString('base64')
+          const duration = (new Date().getTime() - start.getTime())
           res.status(200).json({
-            duration: (new Date().getTime() - start.getTime()),
+            duration,
             base64: prefix + base64
           })
           // res.set({ 'Content-Type': 'image/webp' })
           // img.pngStream().pipe(sharp().webp()).pipe(res)
-          console.log('IMAGE GENERATION ENDED SUCCESSFULLY IN ' + (new Date().getTime() - start.getTime()) + 'ms')
+          console.log('IMAGE GENERATION ENDED SUCCESSFULLY IN ' + duration + 'ms')
+          this.musicorum.controlsAPI.registerGeneration(theme, start.getTime(), duration, 'SUCCESS', source).then(res => res.json())
         } catch (e) {
+          const duration = (new Date().getTime() - start.getTime())
           if (e instanceof ResponseError) res.status(e.code).json(e.response)
           res.status(500).json(responses.GENERIC_ERROR)
-          console.log('IMAGE GENERATION ENDED WITH ERROR IN ' + (new Date().getTime() - start.getTime()) + 'ms')
+          console.log('IMAGE GENERATION ENDED WITH ERROR IN ' + duration + 'ms')
           console.error(e)
+          await this.musicorum.controlsAPI.registerGeneration(theme, start.getTime(), duration, 'ERROR', source)
         }
       })
       .all((_, res) => {

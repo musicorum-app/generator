@@ -1,6 +1,7 @@
 const { App, LastFM } = require('./')
 const themeList = require('./themes/')
 const Spotify = require('node-spotify-api')
+const ControlsAPI = require('./utils/ControlsAPI.js')
 
 module.exports = class MusicorumGenerator {
   init () {
@@ -15,11 +16,11 @@ module.exports = class MusicorumGenerator {
       id: process.env.SPOTIFY_ID,
       secret: process.env.SPOTIFY_SECRET
     })
+    this.controlsAPI = new ControlsAPI()
   }
 
   getThemes () {
     const themes = {}
-    const classList = Object.keys(themeList)
     Object.keys(themeList).forEach(Theme => {
       themes[Theme] = new themeList[Theme](this)
     })
