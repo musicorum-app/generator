@@ -82,6 +82,9 @@ module.exports = class LastFM {
     if (type === 'tracks') {
       query = `${encodeURIComponent(item.name)}%20artist:${encodeURIComponent(item.artist.name)}`
     }
+    if (type === 'albums') {
+      query = `${encodeURIComponent(item.name)}%20artist:${encodeURIComponent(item.artist.name)}`
+    }
     console.log(chalk.green(' REQUESTING TO SPOTIFY ') + `query: ${query}`)
     const search = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=${type.slice(0, -1)}&q=${query}`)
     // const search = await musicorum.spotify.request({ type: , query })
