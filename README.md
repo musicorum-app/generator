@@ -6,10 +6,8 @@ This is a canvas-based image generator for the Musicorum App.
 
 ## Themes
 ### grid
-![example](https://i.imgur.com/y4e9Way.png)
+![example](https://i.imgur.com/ZwfQtD7.jpg)
 
 
 ### tops
-![not full size](https://i.imgur.com/TB6FNyE.png)
-
-_(not in full size, i just dont want to start the app and generate)_
+![example](https://i.imgur.com/rj4935v.jpg)
