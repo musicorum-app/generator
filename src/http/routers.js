@@ -28,7 +28,7 @@ module.exports = class Routers {
         try {
           const img = await this.musicorum.themes[theme].preGenerate(options)
           const prefix = 'data:image/jpeg;base64,'
-          const sharped = await sharp(img.toBuffer()).jpeg().toBuffer()
+          const sharped = await sharp(img.toBuffer()).jpeg({ quality: 100 }).toBuffer()
           const base64 = sharped.toString('base64')
           const duration = (new Date().getTime() - start.getTime())
           res.status(200).json({

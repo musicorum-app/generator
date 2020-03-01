@@ -43,7 +43,7 @@ module.exports = class LastFM {
   async getTotalScrobbles (user, period) {
     if (period === 'overall') {
       const playcount = await this.getUserInfo(user).then(u => u.user.playcount)
-      return { precise: true, playcount }
+      return playcount
     }
 
     const seconds = {
@@ -78,7 +78,7 @@ module.exports = class LastFM {
 
     if (imageFromCache) return imageFromCache.image
 
-    let query = item.name
+    let query = encodeURIComponent(item.name)
     if (type === 'tracks') {
       query = `${encodeURIComponent(item.name)}%20artist:${encodeURIComponent(item.artist.name)}`
     }
@@ -95,6 +95,11 @@ module.exports = class LastFM {
     }
     const res = (results.items[0].album || results.items[0])
     if (!res.images.length) {
+      this.saveCacheData(item, type, 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png')
+      return 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'
+    }
+
+    if (!res.images[1].url) {
       this.saveCacheData(item, type, 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png')
       return 'https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png'
     }
