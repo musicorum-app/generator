@@ -2,11 +2,13 @@ const { App, LastFM } = require('./')
 const themeList = require('./themes/')
 const Spotify = require('node-spotify-api')
 const ControlsAPI = require('./utils/ControlsAPI.js')
+const CacheManager = require('./cache/CacheManager.js')
 
 module.exports = class MusicorumGenerator {
   init () {
     this.themes = this.getThemes()
     this.app = new App(this, process.env.PORT)
+    this.cacheManager = new CacheManager(this)
     this.setupApis()
   }
 
