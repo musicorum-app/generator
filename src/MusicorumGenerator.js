@@ -19,6 +19,10 @@ module.exports = class MusicorumGenerator {
       secret: process.env.SPOTIFY_SECRET
     })
     this.controlsAPI = new ControlsAPI()
+    setTimeout(() => {
+      this.cacheManager.getArtist('cageThe elephant')
+    }, 3000)
+    
   }
 
   getThemes () {

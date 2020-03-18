@@ -8,6 +8,7 @@ const fetch = require('node-fetch')
 module.exports = class CacheManager {
   constructor (musicorum) {
     this.musicorum = musicorum
+    this.cacheLoaded = false
     this.artists = []
     this.albums = []
     this.tracks = []
@@ -37,13 +38,17 @@ module.exports = class CacheManager {
       console.log(chalk.red(' CACHE MANAGER ') + ' Error while loading cache from file in ' + (new Date().getTime() - start) + 'ms')
       console.error(e)
       return
+    } finally {
+      this.cacheLoaded = true
     }
 
     console.log(chalk.green(' CACHE MANAGER ') + ' Cache loaded from files in ' + (new Date().getTime() - start) + 'ms')
   }
 
   async getArtist (artist) {
-    // TODO: artist search and request fallback
+    const filterName = artist.toLowerCase().replace(/\s+/g, '')
+    const foundArtist = this.artists.find(a => a.name.toLowerCase().replace(/\s+/g, '') === filterName)
+    console.log(foundArtist)
   }
 
   static async getImageFromCache (fileName, fallbackUrl) {
