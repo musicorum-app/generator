@@ -38,7 +38,7 @@ module.exports = class CacheFileManager {
     return loadImage(pathName)
       .then(i => i)
       .catch(async () => {
-        console.log(chalk.yellow(' DOWNLOADING IMAGE ') + 'from ' + fallbackUrl)
+        console.log(chalk.yellow(' CACHE FILE MANAGER ') + ' downloading from ' + fallbackUrl)
         const res = await fetch(fallbackUrl)
         const buffer = await res.buffer()
         CacheFileManager.saveImageFromBuffer(pathName, buffer)

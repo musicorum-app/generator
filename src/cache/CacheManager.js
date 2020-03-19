@@ -1,10 +1,13 @@
 const chalk = require('chalk')
-const { CachedArtist } = require('./items')
+const { CachedArtist, CachedAlbum } = require('./items')
 const CacheFileManager = require('./CacheFileManager.js')
 const MiscUtils = require('../utils/MiscUtils.js')
 
+const nameFilter = n => n.toLowerCase().replace(/\s+/g, '')
+
 const classes = {
-  artists: CachedArtist
+  artists: CachedArtist,
+  albums: CachedAlbum
 }
 
 module.exports = class CacheManager {
@@ -45,8 +48,13 @@ module.exports = class CacheManager {
   }
 
   getArtist (artist) {
-    const filterName = artist.toLowerCase().replace(/\s+/g, '')
-    const foundArtist = this.artists.find(a => a.name.toLowerCase().replace(/\s+/g, '') === filterName)
+    const foundArtist = this.artists.find(a => nameFilter(a.name) === nameFilter(artist))
     return foundArtist || null
+  }
+
+  getAlbum (album, artist) {
+    const foundAlbum = this.albums.find(a => nameFilter(a.name) === nameFilter(album) &&
+      nameFilter(a.artist) === nameFilter(artist))
+    return foundAlbum || null
   }
 }

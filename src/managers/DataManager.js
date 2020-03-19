@@ -1,5 +1,5 @@
 const { loadImage, createCanvas } = require('canvas')
-const { CachedArtist } = require('../cache/items')
+const { CachedArtist, CachedAlbum } = require('../cache/items')
 const SpotifyAPI = require('../apis/Spotify.js')
 const DeezerAPI = require('../apis/Deezer.js')
 const path = require('path')
@@ -91,6 +91,35 @@ module.exports = class DataManager {
       }
     }
     return this.getItemImage(artist, searchFallback, CachedArtist, this.cacheManager.artists, spotifyCode, size, background, color)
+  }
+
+  async getAlbumImage (albumName, artistName, spotifyCode, size = 280, background = '000000', color = 'white') {
+    // TODO: finish this
+    const album = this.cacheManager.getAlbum(albumName, artistName)
+    const searchFallback = async spotifySource => {
+      if (spotifySource) {
+        const query = encodeURIComponent(artistName)
+        const spotifyArtist = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=album&q=${query}`)
+        const spotifyObject = spotifyArtist.artists.items[0]
+        return {
+          name: spotifyObject.name,
+          artist: spotifyObject.artists[0].name,
+          image: spotifyObject.images[1].url,
+          spotify: spotifyObject.id,
+          imageID: `l_S${spotifyObject.id}`
+        }
+      } else {
+        const res = await DeezerAPI.searchArtist(artistName)
+        const deezerArtist = res.data[0]
+        return {
+          name: deezerArtist.name,
+          image: deezerArtist.picture_medium,
+          deezer: deezerArtist.id.toString(),
+          imageID: `l_D${deezerArtist.id}`
+        }
+      }
+    }
+    return this.getItemImage(album, searchFallback, CachedArtist, this.cacheManager.albums, spotifyCode, size, background, color)
   }
 
   static createCanvasWithoutScannable (image, size) {
