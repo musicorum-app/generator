@@ -1,3 +1,4 @@
 module.exports = {
-  CachedArtist: require('./CachedArtist.js')
+  CachedArtist: require('./CachedArtist.js'),
+  CachedAlbum: require('./CachedAlbum.js')
 }
