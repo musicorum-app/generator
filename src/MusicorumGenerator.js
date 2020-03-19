@@ -3,12 +3,14 @@ const themeList = require('./themes/')
 const Spotify = require('node-spotify-api')
 const ControlsAPI = require('./utils/ControlsAPI.js')
 const CacheManager = require('./cache/CacheManager.js')
+const DataManager = require('./managers/DataManager.js')
 
 module.exports = class MusicorumGenerator {
   init () {
     this.themes = this.getThemes()
     this.app = new App(this, process.env.PORT)
     this.cacheManager = new CacheManager(this)
+    this.dataManager = new DataManager(this)
     this.setupApis()
   }
 
@@ -19,10 +21,9 @@ module.exports = class MusicorumGenerator {
       secret: process.env.SPOTIFY_SECRET
     })
     this.controlsAPI = new ControlsAPI()
-    setTimeout(() => {
-      this.cacheManager.getArtist('cageThe elephant')
-    }, 3000)
-    
+    setTimeout(async () => {
+      console.log(await this.cacheManager.getArtist('cageThe elephant'))
+    }, 1000)
   }
 
   getThemes () {

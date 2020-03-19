@@ -1,5 +1,7 @@
-const fs = require('fs')
 const { promisify } = require('util')
+const { loadImage } = require('canvas')
+const fetch = require('node-fetch')
+const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
 
@@ -28,5 +30,19 @@ module.exports = class CacheFileManager {
     const pathName = path.resolve(__dirname, '..', '..', 'cache', fileName)
     const { size } = await statAsync(pathName)
     return size
+  }
+
+  static async getImageFromCache (fileName, fallbackUrl) {
+    if (!fallbackUrl) throw new Error('Missing image url while fallbacking to url')
+    const pathName = path.resolve(__dirname, '..', '..', 'cache', fileName)
+    return loadImage(pathName)
+      .then(i => i)
+      .catch(async () => {
+        console.log(chalk.yellow(' DOWNLOADING IMAGE ') + 'from ' + fallbackUrl)
+        const res = await fetch(fallbackUrl)
+        const buffer = await res.buffer()
+        CacheFileManager.saveImageFromBuffer(pathName, buffer)
+        return loadImage(buffer)
+      })
   }
 }
