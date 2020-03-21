@@ -26,6 +26,17 @@ module.exports = class CacheFileManager {
     }
   }
 
+  static async saveJSONFile (filePath, json) {
+    if (typeof json !== 'string') json = JSON.stringify(json)
+    if (!filePath) throw new Error('Invalid file path on cache image saving')
+    try {
+      writeFile(filePath, json)
+      console.log(chalk.green(' JSON SAVED ') + 'Cache saved at ' + filePath)
+    } catch (e) {
+      console.log(chalk.red(' JSON SAVE ERROR ' + 'Error while saving cache to ' + filePath))
+    }
+  }
+
   static async getFileSize (fileName) {
     const pathName = path.resolve(__dirname, '..', '..', 'cache', fileName)
     const { size } = await statAsync(pathName)

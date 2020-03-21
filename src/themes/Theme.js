@@ -11,6 +11,7 @@ module.exports = class Theme {
 
   async loadDefaults () {
     this.defaultArtistImage = await loadImage(path.resolve(__dirname, '..', '..', 'cache', 'artistDefault.png'))
+    this.defaultAlbumImage = await loadImage(path.resolve(__dirname, '..', '..', 'cache', 'albumDefault.png'))
   }
 
   async preGenerate (options) {
@@ -24,13 +25,26 @@ module.exports = class Theme {
     }
   }
 
-  async getArtistImage (artistName, spotifyCode, size, background, color) {
-    const image = await this.musicorum.dataManager.getArtistImage(artistName, spotifyCode, size, background, color)
+  async getArtistImage (artistName, size) {
+    const image = await this.musicorum.dataManager.getArtistImage(artistName, size)
     if (image) {
       return image
     } else {
       return this.defaultArtistImage
     }
+  }
+
+  async getAlbumImage (albumItem, size) {
+    const image = await this.musicorum.dataManager.getAlbumImage(albumItem, size)
+    if (image) {
+      return image
+    } else {
+      return this.defaultArtistImage
+    }
+  }
+
+  async getMultipleArtists (artists) {
+    return this.musicorum.dataManager.getMultipleArtists(artists)
   }
 
   async generate (options) {

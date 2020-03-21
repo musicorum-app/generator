@@ -4,15 +4,12 @@ const path = require('path')
 
 module.exports = class CachedTrack {
   constructor (data) {
-    const { name, artist, album, image, deezer, spotify, imageID, audioAnalysis } = data
+    const { name, artist, album, image, spotify } = data
     this.name = name
     this.artist = artist
     this.album = album
     this.image = image
-    this.deezer = deezer
     this.spotify = spotify
-    this.imageID = imageID
-    this.audioAnalysis = audioAnalysis
   }
 
   getImage () {

@@ -86,15 +86,21 @@ module.exports = class GridTheme extends Theme {
       if (top === 'albums') {
         return CanvasUtils.loadCachedImage(LastFM.getBestImage(i.image, 300))
       } else {
-        return CanvasUtils.loadCachedImage(await lastfm.getImageURLFromSpotify([i], top))
+        // return this.getMultipleArtists(i)
+        // return CanvasUtils.loadCachedImage(await lastfm.getImageURLFromSpotify([i], top))
       }
     }
-    const images = await Promise.all(list.slice(0, SIZE * SIZE).map(filter))
+    // const images = await Promise.all(list.slice(0, SIZE * SIZE).map(filter))
+
+    const imageList = await this.getMultipleArtists(list.slice(SIZE * SIZE))
+
+    const images = await Promise.all(imageList.map(a => a.getImage()))
 
     ctx.globalCompositeOperation = 'destination-over'
     POS = 0
     for (let i = 0; i < SIZE; i++) {
       for (let j = 0; j < SIZE; j++) {
+        console.log('drawing image')
         const img = images[POS]
         const X = j * COVER_SIZE
         const Y = i * COVER_SIZE

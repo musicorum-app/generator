@@ -2,6 +2,7 @@ const chalk = require('chalk')
 const { CachedArtist, CachedAlbum } = require('./items')
 const CacheFileManager = require('./CacheFileManager.js')
 const MiscUtils = require('../utils/MiscUtils.js')
+const path = require('path')
 
 const nameFilter = n => n.toLowerCase().replace(/\s+/g, '')
 
@@ -56,5 +57,17 @@ module.exports = class CacheManager {
     const foundAlbum = this.albums.find(a => nameFilter(a.name) === nameFilter(album) &&
       nameFilter(a.artist) === nameFilter(artist))
     return foundAlbum || null
+  }
+
+  async saveCacheTask () {
+    console.log(chalk.blue(' CACHE MANAGER ') + ' Initialiazing cache json save task...')
+    this.saveCacheArray(this.artists, 'artists.json')
+    this.saveCacheArray(this.albums, 'albums.json')
+    this.saveCacheArray(this.tracks, 'tracks.json')
+  }
+
+  async saveCacheArray (array, file) {
+    console.log(chalk.blue(' CACHE MANAGER ') + ` Starting to save cache for ${file}...`)
+    CacheFileManager.saveJSONFile(path.resolve(__dirname, '..', '..', 'cache', file), array)
   }
 }

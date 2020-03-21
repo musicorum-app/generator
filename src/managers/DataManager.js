@@ -2,131 +2,129 @@ const { loadImage, createCanvas } = require('canvas')
 const { CachedArtist, CachedAlbum } = require('../cache/items')
 const SpotifyAPI = require('../apis/Spotify.js')
 const DeezerAPI = require('../apis/Deezer.js')
+const SearchManager = require('./SearchManager.js')
 const path = require('path')
+const crypto = require('crypto')
+
+const deezerImageRegex = /https?:\/\/cdns-images\.dzcdn\.net\/images\/artist\/([a-zA-Z0-9]+)\/([0-9]+)x([0-9]+)-([0-9a-zA-Z.-]+)/
 
 module.exports = class DataManager {
   constructor (musicorum) {
     this.musicorum = musicorum
     this.cacheManager = musicorum.cacheManager
+    this.searchManager = new SearchManager(musicorum)
     this.loadDefaults()
   }
 
   async loadDefaults () {
     this.defaultArtistImage = await loadImage(path.resolve(__dirname, '..', '..', 'cache', 'artistDefault.png'))
+    this.defaultAlbumImage = await loadImage(path.resolve(__dirname, '..', '..', 'cache', 'albumDefault.png'))
   }
 
-  async getItemImage (item, searchFallback, ItemClass, list, spotifyCode, size = 280, background = '000000', color = 'white') {
-    if (item) {
-      if (spotifyCode) {
-        if (!item.spotify) {
-          try {
-            const obj = await searchFallback(true)
-            if (!obj) throw new Error('Search not found or returned error')
-            item.spotify = obj.spotify
-          } catch (e) {
-            return DataManager.createCanvasWithoutScannable(await item.getImage(), size)
-          }
-        }
-
-        return DataManager.createCanvasWithScannable(await item.getImage(), item.getURI(), background, color, size)
-      } else {
-        return item.getImage()
-      }
-    } else {
-      if (spotifyCode) {
-        try {
-          const obj = await searchFallback(true)
-          if (!obj) throw new Error('Search not found or returned error')
-          item.spotify = obj.spotify
-
-          const newItem = new ItemClass(obj)
-          list.push(newItem)
-          return DataManager.createCanvasWithScannable(await newItem.getImage(), item.getURI(), background, color, size)
-        } catch (e) {
-          console.error(e)
-          return DataManager.createCanvasWithoutScannable(this.defaultArtistImage, size)
-        }
-      } else {
-        try {
-          const obj = await searchFallback(false)
-          if (!obj) throw new Error('Search not found or returned error')
-          item.spotify = obj.spotify
-
-          const newItem = new ItemClass(obj)
-          list.push(newItem)
-          return newItem.getImage()
-        } catch (e) {
-          return this.defaultArtistImage
-        }
-      }
+  async getArtistImage (artistItem, size) {
+    let artistName
+    if (typeof artistItem === 'string') artistName = artistItem
+    else {
+      artistName = artistItem.name
     }
-  }
 
-  async searchFallback (spotifySource = true) {
-
-  }
-
-  async getArtistImage (artistName, spotifyCode, size = 280, background = '000000', color = 'white') {
     const artist = this.cacheManager.getArtist(artistName)
-    const searchFallback = async spotifySource => {
-      if (spotifySource) {
-        const query = encodeURIComponent(artistName)
-        const spotifyArtist = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=artist&q=${query}`)
-        const spotifyObject = spotifyArtist.artists.items[0]
-        return {
-          name: spotifyObject.name,
-          image: spotifyObject.images[1].url,
-          spotify: spotifyObject.id,
-          imageID: `a_S${spotifyObject.id}`
-        }
-      } else {
-        const res = await DeezerAPI.searchArtist(artistName)
-        const deezerArtist = res.data[0]
-        return {
-          name: deezerArtist.name,
-          image: deezerArtist.picture_medium,
-          deezer: deezerArtist.id.toString(),
-          imageID: `a_D${deezerArtist.id}`
-        }
-      }
+    if (artist) return artist.getImage(size)
+    else {
+      const { data } = await DeezerAPI.searchArtist(artistName)
+      const image = data.length ? data[0].picture_medium : null
+      console.log(image)
+      if (!image) return this.defaultArtistImage
+      if (!deezerImageRegex.test(image)) return this.defaultArtistImage
+      const newArtist = new CachedArtist({
+        name: artistName,
+        image
+      })
+
+      this.cacheManager.artists.push(newArtist)
+      return newArtist.getImage(size)
     }
-    return this.getItemImage(artist, searchFallback, CachedArtist, this.cacheManager.artists, spotifyCode, size, background, color)
   }
 
-  async getAlbumImage (albumName, artistName, spotifyCode, size = 280, background = '000000', color = 'white') {
-    // TODO: finish this
-    const album = this.cacheManager.getAlbum(albumName, artistName)
-    const searchFallback = async spotifySource => {
-      if (spotifySource) {
-        const query = encodeURIComponent(artistName)
-        const spotifyArtist = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=album&q=${query}`)
-        const spotifyObject = spotifyArtist.artists.items[0]
-        return {
-          name: spotifyObject.name,
-          artist: spotifyObject.artists[0].name,
-          image: spotifyObject.images[1].url,
-          spotify: spotifyObject.id,
-          imageID: `l_S${spotifyObject.id}`
-        }
-      } else {
-        const res = await DeezerAPI.searchArtist(artistName)
-        const deezerArtist = res.data[0]
-        return {
-          name: deezerArtist.name,
-          image: deezerArtist.picture_medium,
-          deezer: deezerArtist.id.toString(),
-          imageID: `l_D${deezerArtist.id}`
-        }
+  async getAlbumImage ({ name, artist, image: albumImage }, size) {
+    const artistName = artist['#text'] || artist.name
+    const album = this.cacheManager.getAlbum(name, artistName)
+
+    if (album) return album.getImage(size)
+
+    const image = albumImage ? albumImage[3] ? albumImage[3]['#text'] : null : null
+    let newAlbum
+
+    if (image) {
+      newAlbum = new CachedAlbum({
+        name,
+        artist: artistName,
+        image
+      })
+    } else {
+      try {
+        const res = await this.musicorum.lastfm.getAlbumInfo(name, artistName, true)
+        const newImage = res.album.image[3]['#text']
+        if (!newImage) throw new Error('Error while getting the image')
+        newAlbum = new CachedAlbum({
+          name,
+          artist: artistName,
+          image: newImage
+        })
+      } catch (e) {
+        console.error(e)
+        return this.defaultAlbumImage
       }
     }
-    return this.getItemImage(album, searchFallback, CachedArtist, this.cacheManager.albums, spotifyCode, size, background, color)
+
+    this.cacheManager.albums.push(newAlbum)
+    return newAlbum.getImage(size)
+  }
+
+  // TODO: method to get a bunch of images using MBID
+  async getMultipleArtists (artists) {
+    const result = []
+    for (const { name, mbid } of artists) {
+      const foundArtist = this.cacheManager.getArtist(name)
+      if (foundArtist) {
+        result.push(foundArtist)
+        continue
+      }
+      let newArtist
+
+      if (mbid) {
+        try {
+          const id = this.searchManager.getSpotifyIdFromArtistMBID(null, mbid, false)
+          result.push(id)
+          continue
+        } catch (e) {
+          result.push(new CachedArtist(await this.searchManager.searchArtistFromSpotify(name)))
+        } 
+        newArtist = new CachedArtist({
+          name,
+          image: `http://coverartarchive.org/release/${mbid}/front-250`,
+          imageID: `a_M${crypto.randomBytes(8).toString('hex').toUpperCase()}`
+        })
+      } else {
+        newArtist = new CachedArtist(await this.searchManager.searchArtistFromSpotify(name))
+      }
+
+      console.log(newArtist)
+
+      this.cacheManager.albums.push(newArtist)
+      result.push(newArtist)
+    }
+
+    return result
   }
 
   static createCanvasWithoutScannable (image, size) {
     const scannableHeight = Math.round((size / 4))
     const canvas = createCanvas(size, size + scannableHeight)
     const ctx = canvas.getContext('2d')
+
     ctx.drawImage(image, 0, 0, size, size)
+
     return canvas
   }
 
@@ -134,9 +132,11 @@ module.exports = class DataManager {
     const scannableHeight = Math.round((size / 4))
     const canvas = createCanvas(size, size + scannableHeight)
     const ctx = canvas.getContext('2d')
-    ctx.drawImage(image, 0, 0, size, size)
     const scannable = await SpotifyAPI.getSpotifyCode(uri, background, color, 280)
+
+    ctx.drawImage(image, 0, 0, size, size)
     ctx.drawImage(scannable, 0, size, size, scannableHeight)
+
     return canvas
   }
 }

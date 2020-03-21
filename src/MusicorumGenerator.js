@@ -1,6 +1,6 @@
 const { App, LastFM } = require('./')
 const themeList = require('./themes/')
-const Spotify = require('node-spotify-api')
+const Spotify = require('./apis/Spotify')
 const ControlsAPI = require('./utils/ControlsAPI.js')
 const CacheManager = require('./cache/CacheManager.js')
 const DataManager = require('./managers/DataManager.js')
@@ -12,6 +12,7 @@ module.exports = class MusicorumGenerator {
     this.cacheManager = new CacheManager(this)
     this.dataManager = new DataManager(this)
     this.setupApis()
+    this.setupTasks()
   }
 
   setupApis () {
@@ -22,8 +23,14 @@ module.exports = class MusicorumGenerator {
     })
     this.controlsAPI = new ControlsAPI()
     setTimeout(async () => {
-      console.log(await this.cacheManager.getArtist('cageThe elephant'))
-    }, 1000)
+      this.cacheManager.saveCacheTask()
+    }, 10000)
+  }
+
+  setupTasks () {
+    setInterval(() => {
+      this.cacheManager.saveCacheTask()
+    }, process.env.CACHE_SAVE_INTERVAL)
   }
 
   getThemes () {

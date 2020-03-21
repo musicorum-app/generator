@@ -83,9 +83,13 @@ module.exports = class TopsTheme extends Theme {
 
       const type = modules[t].type
       if (type === 'artists') {
-        const img = await this.getArtistImage(list[0].name, true, COVER_SIZE, '000000', 'white')
+        const img = await this.getArtistImage(list[0], COVER_SIZE)
 
-        ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE + (COVER_SIZE / 4)) // (COVER_SIZE / 4)
+        ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
+      } else if (type === 'albums') {
+        const img = await this.getAlbumImage(list[0], COVER_SIZE)
+
+        ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
       } else {
         const img = await CanvasUtils.loadCachedImage(await lastfm.getImageURLFromSpotify(list, type))
 
@@ -99,7 +103,7 @@ module.exports = class TopsTheme extends Theme {
 
       ctx.fillStyle = 'rgba(255, 255, 255, 1)'
       const NAME_W = ctx.measureText(list[0].name).width
-      ctx.fillText(list[0].name, X_MODULE_CENTER - (NAME_W / 2), COVER_MARGIN + 30)
+      ctx.fillText(list[0].name, X_MODULE_CENTER - (NAME_W / 2), COVER_MARGIN)
 
       if (modules[t].type !== 'artists') {
         ctx.fillStyle = 'rgba(255, 255, 255, .5)'
