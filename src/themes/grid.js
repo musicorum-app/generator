@@ -95,7 +95,6 @@ module.exports = class GridTheme extends Theme {
     POS = 0
     for (let i = 0; i < SIZE; i++) {
       for (let j = 0; j < SIZE; j++) {
-        console.log('drawing image')
         const img = images[POS]
         const X = j * COVER_SIZE
         const Y = i * COVER_SIZE
