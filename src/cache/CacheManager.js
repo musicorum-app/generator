@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const { CachedArtist, CachedAlbum } = require('./items')
+const { CachedArtist, CachedAlbum, CachedTrack } = require('./items')
 const CacheFileManager = require('./CacheFileManager.js')
 const MiscUtils = require('../utils/MiscUtils.js')
 const path = require('path')
@@ -8,7 +8,8 @@ const nameFilter = n => n.toLowerCase().replace(/\s+/g, '')
 
 const classes = {
   artists: CachedArtist,
-  albums: CachedAlbum
+  albums: CachedAlbum,
+  tracks: CachedTrack
 }
 
 module.exports = class CacheManager {
@@ -57,6 +58,12 @@ module.exports = class CacheManager {
     const foundAlbum = this.albums.find(a => nameFilter(a.name) === nameFilter(album) &&
       nameFilter(a.artist) === nameFilter(artist))
     return foundAlbum || null
+  }
+
+  getTrack (track, artist) {
+    const foundTrack = this.tracks.find(a => nameFilter(a.name) === nameFilter(track) &&
+      nameFilter(a.artist) === nameFilter(artist))
+    return foundTrack || null
   }
 
   async saveCacheTask () {

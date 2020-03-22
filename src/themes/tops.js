@@ -82,19 +82,10 @@ module.exports = class TopsTheme extends Theme {
       const COVER_X = X_MODULE_CENTER - COVER_SIZE / 2
 
       const type = modules[t].type
-      if (type === 'artists') {
-        const img = await this.getArtistImage(list[0], COVER_SIZE)
 
-        ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
-      } else if (type === 'albums') {
-        const img = await this.getAlbumImage(list[0], COVER_SIZE)
+      const img = await this.getItemImage(type, list[0])
 
-        ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
-      } else {
-        const img = await CanvasUtils.loadCachedImage(await lastfm.getImageURLFromSpotify(list, type))
-
-        ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
-      }
+      ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
 
       ctx.font = '15px "RobotoCondensed Light"'
       ctx.fillStyle = 'rgba(255, 255, 255, .6)'

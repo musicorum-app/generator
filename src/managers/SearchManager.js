@@ -35,6 +35,20 @@ module.exports = class SearchManager {
     }
   }
 
+  async searchTrackFromSpotify (trackName, artistName) {
+    const query = `${encodeURIComponent(trackName)}%20artist:${encodeURIComponent(artistName)}`
+    const spotifyAlbum = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=track&q=${query}`)
+    const spotifyObject = spotifyAlbum.tracks.items[0]
+
+    return {
+      name: spotifyObject.name,
+      artist: spotifyObject.artists[0].name,
+      image: spotifyObject.album.images[1].url,
+      spotify: spotifyObject.id,
+      imageID: `T_S${spotifyObject.id}`
+    }
+  }
+
   async getSpotifyIdFromArtistMBID (artistName, mbid, fallbackToSpotify = true) {
     if (!mbid && fallbackToSpotify) return this.searchArtistFromSpotify(artistName).then((album) => album.spotify)
 
@@ -52,9 +66,5 @@ module.exports = class SearchManager {
     if (!spotifyURL && fallbackToSpotify) return this.searchAlbumFromSpotify(albumName, artistName).then((album) => album.spotify)
 
     return spotifyAlbumRegex.exec(spotifyURL)[1]
-  }
-
-  async getAlbumFromLastFM (albumName, artistName) {
-    
   }
 }

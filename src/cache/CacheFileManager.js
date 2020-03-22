@@ -45,7 +45,7 @@ module.exports = class CacheFileManager {
 
   static async getImageFromCache (fileName, fallbackUrl) {
     if (!fallbackUrl) throw new Error('Missing image url while fallbacking to url')
-    const pathName = path.resolve(__dirname, '..', '..', 'cache', fileName)
+    const pathName = path.resolve(__dirname, '..', '..', 'cache', 'images', fileName)
     return loadImage(pathName)
       .then(i => i)
       .catch(async () => {

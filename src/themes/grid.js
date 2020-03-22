@@ -83,18 +83,13 @@ module.exports = class GridTheme extends Theme {
 
     // Images
     const filter = async i => {
-      if (top === 'albums') {
-        return CanvasUtils.loadCachedImage(LastFM.getBestImage(i.image, 300))
-      } else {
-        // return this.getMultipleArtists(i)
-        // return CanvasUtils.loadCachedImage(await lastfm.getImageURLFromSpotify([i], top))
-      }
+      return this.getItemImage(top, i)
     }
-    // const images = await Promise.all(list.slice(0, SIZE * SIZE).map(filter))
+    const images = await Promise.all(list.slice(0, SIZE * SIZE).map(filter))
 
-    const imageList = await this.getMultipleArtists(list.slice(SIZE * SIZE))
+    // const imageList = await this.getMultipleArtists(list.slice(SIZE * SIZE))
 
-    const images = await Promise.all(imageList.map(a => a.getImage()))
+    // const images = await Promise.all(imageList.map(a => a.getImage()))
 
     ctx.globalCompositeOperation = 'destination-over'
     POS = 0
