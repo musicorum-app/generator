@@ -35,7 +35,6 @@ module.exports = class Theme {
    */
   async getArtistImage (artistObject, that = this) {
     const artist = await that.musicorum.dataManager.getArtist(artistObject)
-    console.log(artist)
     return artist ? artist.getImage() : that.defaultArtistImage
   }
 

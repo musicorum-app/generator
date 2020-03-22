@@ -129,8 +129,6 @@ module.exports = class DataManager {
         newArtist = new CachedArtist(await this.searchManager.searchArtistFromSpotify(name))
       }
 
-      console.log(newArtist)
-
       this.cacheManager.albums.push(newArtist)
       result.push(newArtist)
     }

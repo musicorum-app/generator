@@ -32,7 +32,6 @@ module.exports = class DuoToneTheme extends Theme {
     const colors = colorsPallete[pallete]
 
     const { user: userInfo } = await lastfm.getUserInfo(user)
-    console.log(userInfo)
     if (!userInfo) throw new ResponseError(404, responses.USER_NOT_FOUND)
 
     const playcount = await lastfm.getTotalScrobbles(user, period)
