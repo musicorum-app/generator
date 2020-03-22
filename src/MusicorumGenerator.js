@@ -1,13 +1,18 @@
 const { App, LastFM } = require('./')
 const themeList = require('./themes/')
-const Spotify = require('node-spotify-api')
+const Spotify = require('./apis/Spotify')
 const ControlsAPI = require('./utils/ControlsAPI.js')
+const CacheManager = require('./cache/CacheManager.js')
+const DataManager = require('./managers/DataManager.js')
 
 module.exports = class MusicorumGenerator {
   init () {
     this.themes = this.getThemes()
     this.app = new App(this, process.env.PORT)
+    this.cacheManager = new CacheManager(this)
+    this.dataManager = new DataManager(this)
     this.setupApis()
+    this.setupTasks()
   }
 
   setupApis () {
@@ -17,6 +22,15 @@ module.exports = class MusicorumGenerator {
       secret: process.env.SPOTIFY_SECRET
     })
     this.controlsAPI = new ControlsAPI()
+    setTimeout(async () => {
+      this.cacheManager.saveCacheTask()
+    }, 10000)
+  }
+
+  setupTasks () {
+    setInterval(() => {
+      this.cacheManager.saveCacheTask()
+    }, process.env.CACHE_SAVE_INTERVAL)
   }
 
   getThemes () {

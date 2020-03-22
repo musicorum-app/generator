@@ -98,6 +98,69 @@ module.exports = class CanvasUtils {
       this.drawImage(this.roundImageCanvas(img, w, h, r), x, y, w, h)
       return this
     }
+
+    Context2d.prototype.createGradientMap = function (tone0, tone1) {
+      const rgb0 = CanvasUtils.hexToRGB(tone0)
+      const rgb1 = CanvasUtils.hexToRGB(tone1)
+      const gradient = []
+      for (let i = 0; i < (256 * 4); i += 4) {
+        gradient[i] = ((256 - i / 4) * rgb0.r + (i / 4) * rgb1.r) / 256
+        gradient[i + 1] = ((256 - i / 4) * rgb0.g + (i / 4) * rgb1.g) / 256
+        gradient[i + 2] = ((256 - i / 4) * rgb0.b + (i / 4) * rgb1.b) / 256
+        gradient[i + 3] = 255
+      }
+      return gradient
+    }
+
+    Context2d.prototype.grayscale = function (x, y, w, h) {
+      const pixels = this.getImageData(x, y, w, h)
+      const d = pixels.data
+      let min = 255
+      let max = 0
+
+      for (let i = 0; i < d.length; i += 4) {
+        if (d[i] > max) max = d[i]
+        if (d[i] < min) min = d[i]
+
+        const r = d[i]
+        const g = d[i + 1]
+        const b = d[i + 2]
+        const v = 0.3333 * r + 0.3333 * g + 0.3333 * b
+        d[i] = d[i + 1] = d[i + 2] = v
+      }
+      for (let i = 0; i < d.length; i += 4) {
+        const v = (d[i] - min) * 255 / (max - min)
+        d[i] = d[i + 1] = d[i + 2] = v
+      }
+      this.putImageData(pixels, x, y)
+    }
+
+    Context2d.prototype.canvasDuoToneImage = function (img, [t0, t1], w, h) {
+      const canvas = createCanvas(w, h)
+      const ctx = canvas.getContext('2d')
+
+      ctx.drawImage(img, 0, 0, w, h)
+      ctx.grayscale(0, 0, w, h)
+      const pixels = ctx.getImageData(0, 0, w, h)
+      const gradient = ctx.createGradientMap(t0, t1)
+
+      const d = pixels.data
+
+      for (let i = 0; i < d.length; i += 4) {
+        d[i] = gradient[d[i] * 4]
+        d[i + 1] = gradient[d[i + 1] * 4 + 1]
+        d[i + 2] = gradient[d[i + 2] * 4 + 2]
+      }
+      ctx.putImageData(pixels, 0, 0)
+
+      return canvas
+    }
+
+    Context2d.prototype.drawDuotoneImage = function (img, grd, x, y, w, h) {
+      const canvas = this.canvasDuoToneImage(img, grd, w, h)
+      this.drawImage(canvas, x, y)
+      return this
+    }
   }
 
   static async loadCachedImage (url) {
@@ -126,6 +189,20 @@ module.exports = class CanvasUtils {
     }
   }
 
+  static hexToRGB (hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null
+  }
+
+  static createRGBAFromHex (hex, alpha) {
+    const { r, g, b } = CanvasUtils.hexToRGB(hex)
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  }
+
   static registerFonts () {
     registerFont(ASSETS_SRC + '/fonts/RobotoCondensed-Bold.ttf', { family: 'RobotoCondensed', weight: 'bold' })
     registerFont(ASSETS_SRC + '/fonts/RobotoCondensed-BoldItalic.ttf', { family: 'RobotoCondensed', weight: 'bold', style: 'italic' })
@@ -142,7 +219,25 @@ module.exports = class CanvasUtils {
     registerFont(ASSETS_SRC + '/fonts/RobotoMono-Regular.ttf', { family: 'RobotoMono' })
     registerFont(ASSETS_SRC + '/fonts/RobotoMono-Thin.ttf', { family: 'RobotoMono-Thin' })
     registerFont(ASSETS_SRC + '/fonts/Wizardless.ttf', { family: 'Wizardless' })
+    // ProductSans
     registerFont(ASSETS_SRC + '/fonts/ProductSans-Regular.ttf', { family: 'ProductSans' })
     registerFont(ASSETS_SRC + '/fonts/ProductSans-Bold.ttf', { family: 'ProductSans', weight: 'bold' })
+    // Montserrat
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-Black.ttf', { family: 'Montserrat', weight: 'black' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-BlackItalic.ttf', { family: 'Montserrat', weight: 'black', style: 'italic' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-Bold.ttf', { family: 'Montserrat', weight: 'bold' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-BoldItalic.ttf', { family: 'Montserrat', weight: 'bold', style: 'italic' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-ExtraBold.ttf', { family: 'Montserrat', weight: 'extrabold' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-ExtraBoldItalic.ttf', { family: 'Montserrat', weight: 'extrabold', style: 'italic' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-Light.ttf', { family: 'Montserrat', weight: 'light' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-LightItalic.ttf', { family: 'Montserrat', weight: 'light', style: 'italic' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-Medium.ttf', { family: 'Montserrat', weight: 'medium' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-MediumItalic.ttf', { family: 'Montserrat', weight: 'medium', style: 'italic' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-Regular.ttf', { family: 'Montserrat', weight: 'regular' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-Italic.ttf', { family: 'Montserrat', weight: 'regular', style: 'italic' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-SemiBold.ttf', { family: 'Montserrat', weight: 'semibold' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-SemiBoldItalic.ttf', { family: 'Montserrat', weight: 'semibold', style: 'italic' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-Thin.ttf', { family: 'Montserrat', weight: 'thin' })
+    registerFont(ASSETS_SRC + '/fonts/Montserrat-ThinItalic.ttf', { family: 'Montserrat', weight: 'thin', style: 'italic' })
   }
 }

@@ -82,7 +82,8 @@ module.exports = class TopsTheme extends Theme {
       const COVER_X = X_MODULE_CENTER - COVER_SIZE / 2
 
       const type = modules[t].type
-      const img = await CanvasUtils.loadCachedImage(await lastfm.getImageURLFromSpotify(list, type))
+
+      const img = await this.getItemImage(type, list[0])
 
       ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
 
