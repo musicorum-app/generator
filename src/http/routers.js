@@ -27,7 +27,7 @@ module.exports = class Routers {
         console.log('STARTING IMAGE GENERATION FOR THEME ' + theme)
         try {
           const img = await this.musicorum.themes[theme].preGenerate(options)
-          if (raw) {
+          if (raw && !!process.env.ALLOW_RAW) {
             res.setHeader('Content-Type', 'image/png')
             img.pngStream().pipe(res)
             return
