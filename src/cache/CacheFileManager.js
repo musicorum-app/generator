@@ -4,6 +4,7 @@ const fetch = require('node-fetch')
 const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
+const Constants = require('../utils/Constants.js')
 
 const readFileAsync = promisify(fs.readFile)
 const statAsync = promisify(fs.stat)
@@ -19,9 +20,10 @@ module.exports = class CacheFileManager {
   static async saveImageFromBuffer (filePath, buffer) {
     if (!filePath) throw new Error('Invalid file path on cache image saving')
     try {
-      writeFile(filePath, buffer)
+      await writeFile(filePath, buffer)
       console.log(chalk.green(' CACHE SAVED ') + 'Cache saved at ' + filePath)
     } catch (e) {
+      console.error(e)
       console.log(chalk.red(' CACHE SAVE ERROR ' + 'Error while saving cache to ' + filePath))
     }
   }
@@ -30,9 +32,10 @@ module.exports = class CacheFileManager {
     if (typeof json !== 'string') json = JSON.stringify(json)
     if (!filePath) throw new Error('Invalid file path on cache image saving')
     try {
-      writeFile(filePath, json)
+      await writeFile(filePath, json)
       console.log(chalk.green(' JSON SAVED ') + 'Cache saved at ' + filePath)
     } catch (e) {
+      console.error(e)
       console.log(chalk.red(' JSON SAVE ERROR ' + 'Error while saving cache to ' + filePath))
     }
   }
@@ -45,7 +48,7 @@ module.exports = class CacheFileManager {
 
   static async getImageFromCache (fileName, fallbackUrl) {
     if (!fallbackUrl) throw new Error('Missing image url while fallbacking to url')
-    const pathName = path.resolve(__dirname, '..', '..', 'cache', 'images', fileName)
+    const pathName = path.resolve(Constants.CACHE_IMAGE_PATH, fileName)
     return loadImage(pathName)
       .then(i => i)
       .catch(async () => {

@@ -40,6 +40,8 @@ module.exports = class SearchManager {
     const spotifyAlbum = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=track&q=${query}`)
     const spotifyObject = spotifyAlbum.tracks.items[0]
 
+    if (!spotifyObject) throw new Error('Track not found.')
+
     return {
       name: spotifyObject.name,
       artist: spotifyObject.artists[0].name,
