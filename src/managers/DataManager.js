@@ -25,7 +25,7 @@ module.exports = class DataManager {
     else {
       artistName = artistItem.name
     }
-    
+
     const artist = this.cacheManager.getArtist(artistName)
     if (artist) return artist
     else {
