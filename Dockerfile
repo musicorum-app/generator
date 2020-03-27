@@ -1,4 +1,4 @@
-FROM node:13-alpine
+FROM node:13
 ENV NODE_ENV production
 WORKDIR /usr/src/app
 COPY package*.json ./
