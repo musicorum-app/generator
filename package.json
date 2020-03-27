@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "start-dev": "nodemon --exec node -r dotenv/config index.js",
+    "start-dev": "nodemon --exec node --ignore 'cache/*' -r dotenv/config index.js",
     "start-env": "node -r dotenv/config index.js"
   },
   "author": "metehus",
@@ -15,6 +15,7 @@
   },
   "license": "GPL-3.0",
   "dependencies": {
+    "axios": "^0.19.2",
     "canvas": "^2.6.0",
     "chalk": "^2.4.2",
     "cors": "^2.8.5",

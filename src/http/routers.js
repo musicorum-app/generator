@@ -13,7 +13,7 @@ module.exports = class Routers {
   routers () {
     router.route('/generate')
       .post(async (req, res) => {
-        const { theme, options, scheduler } = req.body
+        const { theme, options, scheduler, raw } = req.body
         const source = scheduler ? 'SCHEDULER' : 'WEB'
         if (!theme || !options) {
           res.status(400).json(responses.MISSING_PARAMS)
@@ -27,8 +27,13 @@ module.exports = class Routers {
         console.log('STARTING IMAGE GENERATION FOR THEME ' + theme)
         try {
           const img = await this.musicorum.themes[theme].preGenerate(options)
+          if (raw && !!process.env.ALLOW_RAW) {
+            res.setHeader('Content-Type', 'image/png')
+            img.pngStream().pipe(res)
+            return
+          }
           const prefix = 'data:image/jpeg;base64,'
-          const sharped = await sharp(img.toBuffer()).jpeg({ quality: 100 }).toBuffer()
+          const sharped = await sharp(img.toBuffer()).jpeg({ quality: Number(process.env.QUALITY) || 90 }).toBuffer()
           const base64 = sharped.toString('base64')
           const duration = (new Date().getTime() - start.getTime())
           res.status(200).json({
@@ -38,10 +43,10 @@ module.exports = class Routers {
           // res.set({ 'Content-Type': 'image/webp' })
           // img.pngStream().pipe(sharp().webp()).pipe(res)
           console.log('IMAGE GENERATION ENDED SUCCESSFULLY IN ' + duration + 'ms')
-          this.musicorum.controlsAPI.registerGeneration(theme, start.getTime(), duration, 'SUCCESS', source).then(res => res.json())
+          this.musicorum.controlsAPI.registerGeneration(theme, start.getTime(), duration, 'SUCCESS', source)
         } catch (e) {
           const duration = (new Date().getTime() - start.getTime())
-          if (e instanceof ResponseError) res.status(e.code).json(e.response)
+          if (e instanceof ResponseError) return res.status(e.code).json(e.response)
           res.status(500).json(responses.GENERIC_ERROR)
           console.log('IMAGE GENERATION ENDED WITH ERROR IN ' + duration + 'ms')
           console.error(e)

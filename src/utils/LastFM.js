@@ -35,6 +35,10 @@ module.exports = class LastFM {
     return this.request('user.getInfo', { user })
   }
 
+  async getAlbumInfo (album, artist, autocorrect) {
+    return this.request('album.getInfo', { album, artist, autocorrect: autocorrect ? 1 : 0 })
+  }
+
   async getTotalScrobblesFromTimestamp (user, from, to) {
     const { recenttracks } = await this.getRecentTracks(user, from, to, false, 1)
     return recenttracks['@attr'].total

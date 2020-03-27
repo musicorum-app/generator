@@ -1,4 +1,7 @@
 node_modules
 package-lock.json
 .env
-cache/*
+cache/images/*
+cache/albums.json
+cache/artists.json
+cache/tracks.json
