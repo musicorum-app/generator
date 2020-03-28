@@ -11,3 +11,7 @@ This is a canvas-based image generator for the Musicorum App.
 
 ### tops
 ![example](https://i.imgur.com/rj4935v.jpg)
+
+
+### duotone
+![example](https://i.imgur.com/KrWsWc4.png)
