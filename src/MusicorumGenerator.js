@@ -22,9 +22,6 @@ module.exports = class MusicorumGenerator {
       secret: process.env.SPOTIFY_SECRET
     })
     this.controlsAPI = new ControlsAPI()
-    setTimeout(async () => {
-      this.cacheManager.saveCacheTask()
-    }, 10000)
   }
 
   setupTasks () {

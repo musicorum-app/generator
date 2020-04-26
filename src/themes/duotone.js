@@ -1,22 +1,11 @@
-const { CanvasUtils, LastFM } = require('../')
+const { CanvasUtils } = require('../')
 const Theme = require('./Theme.js')
-const { createCanvas, loadImage } = require('canvas')
+const { createCanvas } = require('canvas')
 const responses = require('../http/responses.js')
 const ResponseError = require('../http/ResponseError.js')
 
 CanvasUtils.init()
 CanvasUtils.registerFonts()
-
-const sample = {
-  period: '1month',
-  top: 'artist',
-  pallete: 'purplish',
-  messages: {
-    title: 'most played artists',
-    subtitle: 'from last month',
-    scrobbles: ['scrobbles', 'last month']
-  }
-}
 
 const colorsPallete = {
   purplish: ['#16006F', '#F7396F'],

@@ -3,6 +3,9 @@ const responses = require('./responses.js')
 const ResponseError = require('./ResponseError.js')
 const router = Router()
 const sharp = require('sharp')
+const Sentry = require('@sentry/node')
+
+Sentry.init({ dsn: 'https://71e513cd826c403a98df4e163b510f75@o379578.ingest.sentry.io/5214235' })
 
 module.exports = class Routers {
   constructor (musicorum) {
@@ -50,6 +53,7 @@ module.exports = class Routers {
           res.status(500).json(responses.GENERIC_ERROR)
           console.log('IMAGE GENERATION ENDED WITH ERROR IN ' + duration + 'ms')
           console.error(e)
+          Sentry.captureException(e)
           await this.musicorum.controlsAPI.registerGeneration(theme, start.getTime(), duration, 'ERROR', source)
         }
       })

@@ -4,6 +4,9 @@ const LastFM = require('../utils/LastFM.js')
 const responses = require('../http/responses.js')
 const ResponseError = require('../http/ResponseError.js')
 const path = require('path')
+const Sentry = require('@sentry/node')
+
+Sentry.init({ dsn: 'https://71e513cd826c403a98df4e163b510f75@o379578.ingest.sentry.io/5214235' })
 
 module.exports = class Theme {
   constructor (musicorum) {
@@ -21,6 +24,7 @@ module.exports = class Theme {
       if (!options.user) throw new ResponseError(400, responses.MISSING_USER)
       return this.generate(options)
     } catch (e) {
+      Sentry.captureException(e)
       if (e instanceof ResponseError) throw e
       console.error(e)
       throw new ResponseError(500, responses.GENERIC_ERROR)

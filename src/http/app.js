@@ -4,6 +4,9 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const Routers = require('./routers.js')
+const Sentry = require('@sentry/node')
+
+Sentry.init({ dsn: 'https://71e513cd826c403a98df4e163b510f75@o379578.ingest.sentry.io/5214235' })
 
 module.exports = class App {
   constructor (musicorum, port) {
@@ -18,7 +21,9 @@ module.exports = class App {
     app.use(cors())
     app.use(morgan((t, q, s) => this.morganPattern(t, q, s)))
     // app.use(morgan(':method :url'))
+    app.use(Sentry.Handlers.requestHandler())
     app.use(routers.router)
+    app.use(Sentry.Handlers.errorHandler())
     app.listen(this.port, () =>
       console.log(chalk.greenBright(' SUCCESS ') + ' Web server started on port ' + chalk.blue(this.port)))
   }
