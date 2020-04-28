@@ -11,9 +11,23 @@ const writeFile = promisify(fs.writeFile)
 
 module.exports = class CanvasUtils {
   static init () {
+    Context2d.prototype.writeScalableText = function (text, x, y, maxWidth, style, startingSize) {
+
+      let width = this.measureText(text).width
+      let size = startingSize
+      while (width > maxWidth) {
+        size--
+        this.font = style.replace('%S%', size)
+        width = this.measureText(text).width
+        if (size === 2) break
+      }
+      this.font = style.replace('%S%', size)
+      this.fillText(text, x, y)
+    }
+
     Context2d.prototype.printTextBox = function (text, x, y, lH, fit) {
       fit = fit || 0
-      var ctx = this
+      const ctx = this
 
       if (fit <= 0) {
         ctx.fillText(text, x, y)
@@ -204,6 +218,9 @@ module.exports = class CanvasUtils {
   }
 
   static registerFonts () {
+    // Code2000 fallback
+    registerFont(ASSETS_SRC + '/fonts/Code2000.ttf', { family: 'Code2000' })
+    // Roboto
     registerFont(ASSETS_SRC + '/fonts/RobotoCondensed-Bold.ttf', { family: 'RobotoCondensed', weight: 'bold' })
     registerFont(ASSETS_SRC + '/fonts/RobotoCondensed-BoldItalic.ttf', { family: 'RobotoCondensed', weight: 'bold', style: 'italic' })
     registerFont(ASSETS_SRC + '/fonts/RobotoCondensed-Italic.ttf', { family: 'RobotoCondensed', style: 'italic' })

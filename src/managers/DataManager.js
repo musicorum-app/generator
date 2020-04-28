@@ -30,7 +30,10 @@ module.exports = class DataManager {
     if (artist) return artist
     else {
       const deezerImageRegex = /https?:\/\/([a-zA-Z0-9.-]+)\/images\/artist\/([a-zA-Z0-9]+)\/([0-9]+)x([0-9]+)-([0-9a-zA-Z.-]+)/g
-      const { data } = await DeezerAPI.searchArtist(artistName)
+      const res = await DeezerAPI.searchArtist(artistName)
+      const data = res.data
+      if (!data) console.log(res)
+      if (!data) return null
       const image = data.length ? data[0].picture_medium : null
       if (!image) return null
       const regexResult = deezerImageRegex.test(image)

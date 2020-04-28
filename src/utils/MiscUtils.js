@@ -12,6 +12,18 @@ module.exports = class MiscUtils {
 
     return Math.max(bytes, 0.1).toFixed(1) + byteUnits[i]
   }
+
+  static chunkArray (array, pieces) {
+    return Array(Math.ceil(array.length / pieces)).fill().map((_, i) => array.slice(i * pieces, i * pieces + pieces))
+  }
+
+  static async wait (ms) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve()
+      }, ms)
+    })
+  }
 }
 
 module.exports.readdir = promisify(fs.readdir)

@@ -152,14 +152,14 @@ module.exports = class DuoToneTheme extends Theme {
 
       if (subtext) {
         const TEXT_X = LIST_X + FIXED_POSITION_WIDTH
-        ctx.font = '35px "Montserrat Black"'
+        ctx.font = '35px "Montserrat Black, Code2000"'
         ctx.fillText(text, TEXT_X, POSITION_Y - 17, WIDTH - TEXT_X - LIST_MARGIN_X)
 
-        ctx.font = '20px "Montserrat"'
+        ctx.font = '20px "Montserrat, Code2000"'
         ctx.fillText(subtext, TEXT_X, POSITION_Y + 10, WIDTH - TEXT_X - LIST_MARGIN_X)
       } else {
         const TEXT_X = LIST_X + FIXED_POSITION_WIDTH
-        ctx.font = '40px "Montserrat Black"'
+        ctx.font = '40px "Montserrat Black, Code2000"'
         ctx.fillText(text, TEXT_X, POSITION_Y - 5, WIDTH - TEXT_X - LIST_MARGIN_X)
       }
     }

@@ -87,7 +87,7 @@ module.exports = class TopsTheme extends Theme {
 
       ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
 
-      ctx.font = '15px "RobotoCondensed Light"'
+      ctx.font = '15px "RobotoCondensed Light, Code2000"'
       ctx.fillStyle = 'rgba(255, 255, 255, .6)'
       const TOP_TITLE_W = ctx.measureText(modules[t].message).width
       ctx.fillText(modules[t].message, X_MODULE_CENTER - (TOP_TITLE_W / 2), COVER_Y - 10)
