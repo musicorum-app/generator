@@ -12,6 +12,7 @@ const writeFile = promisify(fs.writeFile)
 module.exports = class CanvasUtils {
   static init () {
     Context2d.prototype.writeScalableText = function (text, x, y, maxWidth, style, startingSize) {
+      this.font = style.replace('%S%', startingSize)
       let width = this.measureText(text).width
       let size = startingSize
       while (width > maxWidth) {

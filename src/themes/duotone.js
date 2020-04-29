@@ -12,7 +12,7 @@ const colorsPallete = {
   natural: ['#1A2A56', '#00D574'],
   divergent: ['#7a004f', '#80f8f8'],
   sun: ['#EA1264', '#D7FD31'],
-  brownish: ['#141209', '#ffea00'],
+  yellish: ['#141209', '#ffea00'],
   horror: ['#000000', '#dc2c2c']
 }
 

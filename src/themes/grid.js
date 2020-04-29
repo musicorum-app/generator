@@ -97,11 +97,12 @@ module.exports = class GridTheme extends Theme {
 
     const images = []
 
-    const chunks = MiscUtils.chunkArray(promises, SIZE)
+    const chunks = MiscUtils.chunkArray(promises, 8)
 
     for (let i = 0; i < chunks.length; i++) {
       const res = await Promise.all(chunks[i].map(f => f()))
-      if (top === 'tracks') await MiscUtils.wait(900)
+      if (top === 'tracks') await MiscUtils.wait(500)
+      else await MiscUtils.wait(300)
       console.log('CHUNK ' + i + ' FINISHED')
       images.push(...res)
     }
@@ -119,7 +120,6 @@ module.exports = class GridTheme extends Theme {
         const Y = i * COVER_SIZE
 
         if (img) {
-          console.log(img)
           ctx.drawImage(img, X, Y, COVER_SIZE, COVER_SIZE)
         } else {
           ctx.fillStyle = 'black'
