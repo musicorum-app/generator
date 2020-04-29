@@ -22,7 +22,9 @@ module.exports = class Theme {
   async preGenerate (options) {
     try {
       if (!options.user) throw new ResponseError(400, responses.MISSING_USER)
-      return this.generate(options)
+      // eslint-disable-next-line no-extra-boolean-cast
+      if (options.story) return this.generateStory(options)
+      else return this.generate(options)
     } catch (e) {
       Sentry.captureException(e)
       if (e instanceof ResponseError) throw e
@@ -37,9 +39,9 @@ module.exports = class Theme {
    * @param {string} artistObject.name The artist name from the object
    * @returns {Promise<Image>} The artist image in canvas item
    */
-  async getArtistImage (artistObject, that = this) {
+  async getArtistImage (artistObject, that = this, size) {
     const artist = await that.musicorum.dataManager.getArtist(artistObject)
-    return artist ? artist.getImage() : that.defaultArtistImage
+    return artist ? artist.getImage(size) : that.defaultArtistImage
   }
 
   /**
@@ -49,9 +51,9 @@ module.exports = class Theme {
    * @param {string} albumObject.artist.name The artist name
    * @returns {Promise<Image>} The album image in canvas item
    */
-  async getAlbumImage (albumObject, that = this) {
+  async getAlbumImage (albumObject, that = this, size) {
     const album = await that.musicorum.dataManager.getAlbum(albumObject)
-    return album ? album.getImage() : that.defaultAlbumImage
+    return album ? album.getImage(size) : that.defaultAlbumImage
   }
 
   /**
@@ -61,12 +63,12 @@ module.exports = class Theme {
    * @param {string} trackObject.artist.name The artist name
    * @returns {Promise<Image>} The track image in canvas item
    */
-  async getTrackImage (trackObject, that = this) {
+  async getTrackImage (trackObject, that = this, size) {
     const track = await that.musicorum.dataManager.getTrack(trackObject)
     return track ? track.getImage() : that.defaultAlbumImage
   }
 
-  async getItemImage (itemType, arg) {
+  async getItemImage (itemType, arg, size) {
     if (!itemType || typeof itemType !== 'string') throw new TypeError('Invalid item type from Theme.getItemImage')
     if (itemType.endsWith('s')) itemType = itemType.slice(0, -1)
     if (!['artist', 'album', 'track'].includes(itemType)) throw new TypeError(`Invalid item type ${itemType}. Must be 'artist', 'album' or 'track'`)
@@ -74,7 +76,7 @@ module.exports = class Theme {
       artist: this.getArtistImage,
       album: this.getAlbumImage,
       track: this.getTrackImage
-    }[itemType](arg, this)
+    }[itemType](arg, this, size)
   }
 
   async loadUserImage (userObject, size) {
@@ -88,5 +90,9 @@ module.exports = class Theme {
 
   async generate (options) {
     throw new Error('Missing theme generate function')
+  }
+
+  async generateStory (options) {
+    throw new Error('Missing instagram theme generate function')
   }
 }

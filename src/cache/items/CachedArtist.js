@@ -10,9 +10,11 @@ module.exports = class CachedArtist {
     this.imageID = imageID
   }
 
-  async getImage () {
+  async getImage (size) {
     try {
-      return CacheFileManager.getImageFromCache(this.imageID, this.image)
+      if (!size) return CacheFileManager.getImageFromCache(this.imageID, this.image)
+      const url = this.image.replace('/250x250-', `/${size}x${size}-`)
+      return CacheFileManager.getImageFromCache(this.imageID + '_H', url)
     } catch (e) {
       return loadImage(path.resolve(__dirname, '..', '..', '..', 'cache', 'artistDefault.png'))
     }

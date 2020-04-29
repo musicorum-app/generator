@@ -11,9 +11,11 @@ module.exports = class CachedAlbum {
     this.imageID = imageID
   }
 
-  getImage () {
+  getImage (size) {
     try {
-      return CacheFileManager.getImageFromCache(this.imageID, this.image)
+      if (!size) return CacheFileManager.getImageFromCache(this.imageID, this.image)
+      const url = this.image.replace('300x300', `${size}x${size}`)
+      return CacheFileManager.getImageFromCache(this.imageID + '_H', url)
     } catch (e) {
       return loadImage(path.resolve(__dirname, '..', '..', '..', 'cache', 'albumDefault.png'))
     }

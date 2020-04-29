@@ -41,6 +41,7 @@ module.exports = class LastFM {
 
   async getTotalScrobblesFromTimestamp (user, from, to) {
     const { recenttracks } = await this.getRecentTracks(user, from, to, false, 1)
+    if (!recenttracks) return 0
     return recenttracks['@attr'].total
   }
 

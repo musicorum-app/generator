@@ -1,4 +1,4 @@
-const { CanvasUtils, LastFM } = require('../')
+const { CanvasUtils, LastFM } = require('..')
 const Theme = require('./Theme.js')
 const { createCanvas, loadImage } = require('canvas')
 const responses = require('../http/responses.js')
@@ -7,10 +7,10 @@ const ResponseError = require('../http/ResponseError.js')
 CanvasUtils.init()
 CanvasUtils.registerFonts()
 
-module.exports = class UnttitledTheme extends Theme {
+module.exports = class DarklyTheme extends Theme {
   async generate (options) {
     const lastfm = this.musicorum.lastfm
-    const { user, period, modules, messages, profileBackground, color, accent } = options
+    const { user, period, modules, messages, color, accent } = options
 
     const title = messages.title[0].replace(/(%USER%)/g, user.toUpperCase())
 
@@ -24,8 +24,8 @@ module.exports = class UnttitledTheme extends Theme {
     const playcount = await lastfm.getTotalScrobbles(user, period)
     // const playcount = { precise: false, playcount: 200 }
 
-    const WIDTH = 1000
-    const HEIGHT = 730
+    const WIDTH = 840
+    const HEIGHT = 740
 
     const canvas = createCanvas(WIDTH, HEIGHT)
     const ctx = canvas.getContext('2d')
@@ -42,7 +42,7 @@ module.exports = class UnttitledTheme extends Theme {
     ctx.fillStyle = color
     ctx.writeScalableText(title, AVATAR_SIZE + AVATAR_MARGIN * 1.4, AVATAR_MARGIN + 70,
       WIDTH - AVATAR_SIZE - (AVATAR_MARGIN * 2), 'italic %S%px "Montserrat Black"', 78)
-    
+
     ctx.textAlign = 'end'
     ctx.font = 'italic 47px "Montserrat Black"'
     ctx.writeScalableText(messages.title[1], WIDTH - AVATAR_MARGIN * 0.5, AVATAR_MARGIN + 120,
@@ -96,7 +96,7 @@ module.exports = class UnttitledTheme extends Theme {
       ctx.font = 'bold 30px "Montserrat"'
       ctx.fillStyle = accent
       const texts = list.map(l => l.name)
-      
+
       const LIST_MARGIN = 53
 
       for (let i = 0; i < texts.length; i++) {
@@ -108,6 +108,12 @@ module.exports = class UnttitledTheme extends Theme {
           (WIDTH / 2) - MODULE_MARGIN * 0.5, '%S%px Montserrat, Code2000', 30)
       }
     }
+
+    const CREDIT_MARGIN = 8
+    ctx.textAlign = 'end'
+    ctx.font = '20px "Montserrat"'
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+    ctx.fillText('musicorumapp.com', WIDTH - CREDIT_MARGIN, HEIGHT - CREDIT_MARGIN)
 
     const [avatar] = await Promise.all([
       loadImage(userInfo.image[0]['#text'] ? LastFM.getBestImage(userInfo.image, 300) : 'https://lastfm-img2.akamaized.net/i/u/avatar320/818148bf682d429dc215c1705eb27b98')
