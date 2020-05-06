@@ -1,3 +1,5 @@
+![Docker Image CI](https://github.com/musicorum-app/generator/workflows/Docker%20Image%20CI/badge.svg?branch=master)
+
 # Musicorum generator
 ### **This is a Work in Progress**
 
