@@ -215,12 +215,13 @@ module.exports = class GridTheme extends Theme {
 
     const IMAGE_SIZE = WIDTH / 4
 
+    let POS = 0
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 4; j++) {
         const X = j * IMAGE_SIZE
         const Y = i * IMAGE_SIZE + WIDTH
 
-        const item = list[i * j]
+        const item = list[POS]
 
         ctx.drawImage(images[i][j], X, Y, IMAGE_SIZE, IMAGE_SIZE)
 
@@ -261,6 +262,7 @@ module.exports = class GridTheme extends Theme {
           const PLAYCOUNT_Y = Y + IMAGE_SIZE - 5
           ctx.fillText(PLAYCOUNT, PLAYCOUNT_X, PLAYCOUNT_Y)
         }
+        POS++
       }
     }
     return canvas
