@@ -4,6 +4,7 @@ const ResponseError = require('./ResponseError.js')
 const router = Router()
 const sharp = require('sharp')
 const Sentry = require('@sentry/node')
+const crypto = require('crypto')
 
 Sentry.init({ dsn: 'https://71e513cd826c403a98df4e163b510f75@o379578.ingest.sentry.io/5214235' })
 
@@ -16,8 +17,8 @@ module.exports = class Routers {
   routers () {
     router.route('/generate')
       .post(async (req, res) => {
-        const { theme, options, scheduler, raw } = req.body
-        const source = scheduler ? 'SCHEDULER' : 'WEB'
+        const { theme, options, raw } = req.body
+        const source = req.headers['x-source'] ? req.headers['x-source'].toLowerCase() : 'unknown'
         if (!theme || !options) {
           res.status(400).json(responses.MISSING_PARAMS)
           return
@@ -27,7 +28,7 @@ module.exports = class Routers {
           return
         }
         const start = new Date()
-        console.log('STARTING IMAGE GENERATION FOR THEME ' + theme)
+        console.log('STARTING IMAGE GENERATION FOR THEME ' + theme + ' FROM SOURCE ' + source)
         try {
           const img = await this.musicorum.themes[theme].preGenerate(options)
           if (raw && !!process.env.ALLOW_RAW) {
@@ -37,11 +38,13 @@ module.exports = class Routers {
           }
           const prefix = 'data:image/jpeg;base64,'
           const sharped = await sharp(img.toBuffer()).jpeg({ quality: Number(process.env.QUALITY) || 90 }).toBuffer()
-          const base64 = sharped.toString('base64')
+          const base64 = prefix + sharped.toString('base64')
           const duration = (new Date().getTime() - start.getTime())
+          const signature = crypto.createHash('sha256').update(`${base64}@${process.env.UPLOAD_TOKEN}`).digest('base64')
           res.status(200).json({
             duration,
-            base64: prefix + base64
+            signature,
+            base64: base64
           })
           // res.set({ 'Content-Type': 'image/webp' })
           // img.pngStream().pipe(sharp().webp()).pipe(res)
