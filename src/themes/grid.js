@@ -42,22 +42,22 @@ module.exports = class GridTheme extends Theme {
 
         if (names) {
           const GRADIENT = ctx.createLinearGradient(X, Y, X, Y + COVER_SIZE)
-          GRADIENT.addColorStop(0, 'rgba(0, 0, 0, .6)')
-          GRADIENT.addColorStop(0.28, 'rgba(0, 0, 0, .5)')
-          GRADIENT.addColorStop(0.54, 'rgba(0, 0, 0, 0)')
+          GRADIENT.addColorStop(0, 'rgba(0, 0, 0, .5)')
+          GRADIENT.addColorStop(0.10, 'rgba(0, 0, 0, .4)')
+          GRADIENT.addColorStop(0.28, 'rgba(0, 0, 0, 0)')
 
           ctx.fillStyle = GRADIENT
           ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
 
           ctx.font = 'bold 15px "RobotoCondensed, Code2000"'
           ctx.fillStyle = 'rgb(255, 255, 255)'
-          ctx.writeScalableText(item.name, X + 5, Y + 5 + 16, COVER_SIZE - 10,
-            'bold %S%px "RobotoCondensed, Code2000"', 15)
+          ctx.writeScalableText(item.name, X + 5, Y + 5 + 16 + (SIZE > 9 ? -8 : 0), COVER_SIZE - 10,
+            'bold %S%px "RobotoCondensed, Code2000"', SIZE > 9 ? 13 : 15)
           ctx.font = '13px "RobotoCondensed-Light, Code2000"'
           if (top === 'albums' || top === 'tracks') {
             ctx.fillStyle = 'rgb(240, 240, 240)'
-            ctx.writeScalableText(item.artist.name, X + 5, Y + 5 + 30,
-              COVER_SIZE - 10, '%S%px "RobotoCondensed-Light, Code2000"', 13)
+            ctx.writeScalableText(item.artist.name, X + 5, Y + 5 + 30 + (SIZE > 9 ? -8 : 0),
+              COVER_SIZE - 10, '%S%px "RobotoCondensed-Light, Code2000"',  SIZE > 9 ? 10 : 13)
           }
         }
 
