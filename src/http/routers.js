@@ -18,7 +18,7 @@ module.exports = class Routers {
     router.route('/generate')
       .post(async (req, res) => {
         const { theme, options, raw } = req.body
-        const source = req.headers['x-source'].toLowerCase()
+        const source = req.headers['x-source'] ? req.headers['x-source'].toLowerCase() : 'unknown'
         if (!theme || !options) {
           res.status(400).json(responses.MISSING_PARAMS)
           return
