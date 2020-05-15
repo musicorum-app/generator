@@ -4,17 +4,16 @@ const path = require('path')
 
 module.exports = class CachedArtist {
   constructor (data) {
-    const { name, image, imageID } = data
+    const { name, image, imageID, spotify } = data
     this.name = name
     this.image = image
     this.imageID = imageID
+    this.spotify = spotify
   }
 
   async getImage (size) {
     try {
-      if (!size) return CacheFileManager.getImageFromCache(this.imageID, this.image)
-      const url = this.image.replace('/250x250-', `/${size}x${size}-`)
-      return CacheFileManager.getImageFromCache(this.imageID + '_H', url)
+      return CacheFileManager.getImageFromCache(this.imageID, this.image)
     } catch (e) {
       return loadImage(path.resolve(__dirname, '..', '..', '..', 'cache', 'artistDefault.png'))
     }

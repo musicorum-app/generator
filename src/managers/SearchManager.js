@@ -10,14 +10,21 @@ module.exports = class SearchManager {
 
   async searchArtistFromSpotify (artistName) {
     const query = encodeURIComponent(artistName)
-    const spotifyArtist = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=artist&q=${query}`)
-    const spotifyObject = spotifyArtist.artists.items[0]
+    try {
+      console.log('REQUESTING TO SPOTIFY')
+      const spotifyArtist = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=artist&q=${query}`)
+      const spotifyObject = spotifyArtist.artists.items[0]
 
-    return {
-      name: spotifyObject.name,
-      image: spotifyObject.images[1].url,
-      spotify: spotifyObject.id,
-      imageID: `a_S${spotifyObject.id}`
+      if (!spotifyObject) throw new Error('Artist not found.')
+
+      return {
+        name: spotifyObject.name,
+        image: spotifyObject.images[1].url,
+        spotify: spotifyObject.id,
+        imageID: `a_S${spotifyObject.id}`
+      }
+    } catch (e) {
+      console.log(e)
     }
   }
 

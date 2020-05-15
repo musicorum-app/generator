@@ -1,7 +1,6 @@
 const { loadImage, createCanvas } = require('canvas')
 const { CachedArtist, CachedAlbum, CachedTrack } = require('../cache/items')
 const SpotifyAPI = require('../apis/Spotify.js')
-const DeezerAPI = require('../apis/Deezer.js')
 const SearchManager = require('./SearchManager.js')
 const path = require('path')
 const crypto = require('crypto')
@@ -26,26 +25,23 @@ module.exports = class DataManager {
       artistName = artistItem.name
     }
 
-    const artist = this.cacheManager.getArtist(artistName)
-    if (artist) return artist
+    const artist = await this.cacheManager.getArtist(artistName)
+    if (artist && artist.spotify) return artist
     else {
-      const deezerImageRegex = /https?:\/\/([a-zA-Z0-9.-]+)\/images\/artist\/([a-zA-Z0-9]+)\/([0-9]+)x([0-9]+)-([0-9a-zA-Z.-]+)/g
-      const res = await DeezerAPI.searchArtist(artistName)
-      const data = res.data
-      if (!data) console.log(res)
-      if (!data) return null
-      const image = data.length ? data[0].picture_medium : null
-      if (!image) return null
-      const regexResult = deezerImageRegex.test(image)
-      if (!regexResult) return null
-      const newArtist = new CachedArtist({
-        name: artistName,
-        image,
-        imageID: `A_D${data[0].id}`
-      })
+      try {
+        const data = await this.searchManager.searchArtistFromSpotify(artistName)
+        if (!data) {
+          console.log(data)
+          return null
+        }
+        const newArtist = new CachedArtist(data)
 
-      this.cacheManager.artists.push(newArtist)
-      return newArtist
+        this.cacheManager.artists.push(newArtist)
+        return newArtist
+      } catch (e) {
+        console.error(e)
+        return null
+      }
     }
   }
 
