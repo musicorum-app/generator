@@ -91,7 +91,7 @@ module.exports = class Routers {
 
         for (let i = 0; i < chunks.length; i++) {
           const res = await Promise.all(chunks[i].map(f => f()))
-          await MiscUtils.wait(100)
+          await MiscUtils.wait(300)
           ids.push(...res.filter(r => !!r).map(r => r.spotify))
         }
 
