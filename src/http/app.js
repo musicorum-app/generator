@@ -5,6 +5,7 @@ const cors = require('cors')
 const app = express()
 const Routers = require('./routers.js')
 const Sentry = require('@sentry/node')
+const cacheRouter = require('./cache.js')
 
 Sentry.init({ dsn: 'https://71e513cd826c403a98df4e163b510f75@o379578.ingest.sentry.io/5214235' })
 
@@ -23,6 +24,7 @@ module.exports = class App {
     // app.use(morgan(':method :url'))
     app.use(Sentry.Handlers.requestHandler())
     app.use(routers.router)
+    app.use(cacheRouter(this.musicorum))
     app.use(Sentry.Handlers.errorHandler())
     app.listen(this.port, () =>
       console.log(chalk.greenBright(' SUCCESS ') + ' Web server started on port ' + chalk.blue(this.port)))
