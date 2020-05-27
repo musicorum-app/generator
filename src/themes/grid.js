@@ -16,119 +16,105 @@ module.exports = class GridTheme extends Theme {
     if (!top) top = 'albums'
     if (!period) period = '1month'
 
-    const SIZE = options.size < 3 || options.size > 14 ? 3 : options.size
+    const SIZE = options.size < 3 || options.size > 20 ? 3 : options.size
     const topList = await lastfm.getUserTop(user, top, period, SIZE * SIZE)
     let list = topList.topalbums || topList.topartists || topList.toptracks
     if (!list) throw new ResponseError(404, responses.USER_NOT_FOUND)
     list = list.album || list.track || list.artist
 
-    const canvas = createCanvas(1300, 1300)
+    const canvasSize = SIZE < 11 ? 1300 : 1890
+
+    const canvas = createCanvas(canvasSize, canvasSize)
     const ctx = canvas.getContext('2d')
 
     const COVER_SIZE = canvas.width / SIZE
 
-    let POS = 0
-    for (let i = 0; i < SIZE; i++) {
-      for (let j = 0; j < SIZE; j++) {
-        const item = list[POS]
-        if (!item) {
-          break
+    await Promise.all([
+      (async () => {
+        if (!names && !playcount) return
+        let POS = 0
+        for (let i = 0; i < SIZE; i++) {
+          for (let j = 0; j < SIZE; j++) {
+            const item = list[POS]
+            if (!item) {
+              break
+            }
+            const X = j * COVER_SIZE
+            const Y = i * COVER_SIZE
+
+            // ctx.fillStyle = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
+            // ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
+
+            if (names) {
+              ctx.globalCompositeOperation = 'source-over'
+              const GRADIENT = ctx.createLinearGradient(X, Y, X, Y + COVER_SIZE)
+              GRADIENT.addColorStop(0, 'rgba(0, 0, 0, .5)')
+              GRADIENT.addColorStop(0.10, 'rgba(0, 0, 0, .4)')
+              GRADIENT.addColorStop(0.28, 'rgba(0, 0, 0, 0)')
+
+              ctx.fillStyle = GRADIENT
+              ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
+
+              ctx.font = 'bold 15px "RobotoCondensed, Code2000"'
+              ctx.fillStyle = 'rgb(255, 255, 255)'
+              ctx.writeScalableText(item.name, X + 5, Y + 5 + 16 + (SIZE > 9 ? -8 : 0), COVER_SIZE - 10,
+                'bold %S%px "RobotoCondensed, Code2000"', SIZE > 9 ? 13 : 15)
+              ctx.font = '13px "RobotoCondensed-Light, Code2000"'
+              if (top === 'albums' || top === 'tracks') {
+                ctx.fillStyle = 'rgb(240, 240, 240)'
+                ctx.writeScalableText(item.artist.name, X + 5, Y + 5 + 30 + (SIZE > 9 ? -8 : 0),
+                  COVER_SIZE - 10, '%S%px "RobotoCondensed-Light, Code2000"', SIZE > 9 ? 10 : 13)
+              }
+            }
+
+            if (playcount) {
+              ctx.globalCompositeOperation = 'source-over'
+              const PLAYCOUNT_GRADIENT = ctx.createLinearGradient(X + COVER_SIZE, Y + COVER_SIZE, X + (COVER_SIZE * 0.3), Y)
+              PLAYCOUNT_GRADIENT.addColorStop(0, 'rgba(0, 0, 0, .6)')
+              PLAYCOUNT_GRADIENT.addColorStop(0.14, 'rgba(0, 0, 0, .3)')
+              PLAYCOUNT_GRADIENT.addColorStop(0.26, 'rgba(0, 0, 0, 0)')
+
+              ctx.fillStyle = PLAYCOUNT_GRADIENT
+              ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
+
+              ctx.font = '20px "RobotoMono-Light"'
+              ctx.fillStyle = 'rgb(255, 255, 255)'
+              const PLAYCOUNT = item.playcount
+              const PLAYCOUNT_X = X + COVER_SIZE - ctx.measureText(PLAYCOUNT).width - 5
+              const PLAYCOUNT_Y = Y + COVER_SIZE - 5
+              ctx.fillText(PLAYCOUNT, PLAYCOUNT_X, PLAYCOUNT_Y)
+            }
+
+            // eslint-disable-next-line no-use-before-define
+            POS++
+          }
         }
-        const X = j * COVER_SIZE
-        const Y = i * COVER_SIZE
+      })(),
+      (async () => {
+        const images = list.slice(0, SIZE * SIZE)
+        const fns = []
 
-        // ctx.fillStyle = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
-        // ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
-
-        if (names) {
-          const GRADIENT = ctx.createLinearGradient(X, Y, X, Y + COVER_SIZE)
-          GRADIENT.addColorStop(0, 'rgba(0, 0, 0, .5)')
-          GRADIENT.addColorStop(0.10, 'rgba(0, 0, 0, .4)')
-          GRADIENT.addColorStop(0.28, 'rgba(0, 0, 0, 0)')
-
-          ctx.fillStyle = GRADIENT
-          ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
-
-          ctx.font = 'bold 15px "RobotoCondensed, Code2000"'
-          ctx.fillStyle = 'rgb(255, 255, 255)'
-          ctx.writeScalableText(item.name, X + 5, Y + 5 + 16 + (SIZE > 9 ? -8 : 0), COVER_SIZE - 10,
-            'bold %S%px "RobotoCondensed, Code2000"', SIZE > 9 ? 13 : 15)
-          ctx.font = '13px "RobotoCondensed-Light, Code2000"'
-          if (top === 'albums' || top === 'tracks') {
-            ctx.fillStyle = 'rgb(240, 240, 240)'
-            ctx.writeScalableText(item.artist.name, X + 5, Y + 5 + 30 + (SIZE > 9 ? -8 : 0),
-              COVER_SIZE - 10, '%S%px "RobotoCondensed-Light, Code2000"', SIZE > 9 ? 10 : 13)
+        let POS = 0
+        for (let i = 0; i < SIZE; i++) {
+          for (let j = 0; j < SIZE; j++) {
+            const img = images[POS]
+            const X = j * COVER_SIZE
+            const Y = i * COVER_SIZE
+            fns.push([
+              [X, Y],
+              () => this.getItemImage(top, img)
+            ])
+            POS++
           }
         }
 
-        if (playcount) {
-          const PLAYCOUNT_GRADIENT = ctx.createLinearGradient(X + COVER_SIZE, Y + COVER_SIZE, X + (COVER_SIZE * 0.3), Y)
-          PLAYCOUNT_GRADIENT.addColorStop(0, 'rgba(0, 0, 0, .6)')
-          PLAYCOUNT_GRADIENT.addColorStop(0.14, 'rgba(0, 0, 0, .3)')
-          PLAYCOUNT_GRADIENT.addColorStop(0.26, 'rgba(0, 0, 0, 0)')
-
-          ctx.fillStyle = PLAYCOUNT_GRADIENT
-          ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
-
-          ctx.font = '20px "RobotoMono-Light"'
-          ctx.fillStyle = 'rgb(255, 255, 255)'
-          const PLAYCOUNT = item.playcount
-          const PLAYCOUNT_X = X + COVER_SIZE - ctx.measureText(PLAYCOUNT).width - 5
-          const PLAYCOUNT_Y = Y + COVER_SIZE - 5
-          ctx.fillText(PLAYCOUNT, PLAYCOUNT_X, PLAYCOUNT_Y)
-        }
-
-        // eslint-disable-next-line no-use-before-define
-        POS++
-      }
-    }
-
-    // Images
-    const mapper = async i => (new Promise(resolve => {
-      resolve(this.getItemImage(top, i))
-    }))
-    const promises = []
-
-    list.slice(0, SIZE * SIZE).forEach(i => {
-      promises.push(async () => (
-        mapper(i)
-      ))
-    })
-
-    const images = []
-
-    const chunks = MiscUtils.chunkArray(promises, 8)
-
-    for (let i = 0; i < chunks.length; i++) {
-      const res = await Promise.all(chunks[i].map(f => f()))
-      if (top === 'albums') await MiscUtils.wait(300)
-      else await MiscUtils.wait(700)
-      console.log('CHUNK ' + i + ' FINISHED')
-      images.push(...res)
-    }
-
-    // const imageList = await this.getMultipleArtists(list.slice(SIZE * SIZE))
-
-    // const images = await Promise.all(imageList.map(a => a.getImage()))
-
-    ctx.globalCompositeOperation = 'destination-over'
-    POS = 0
-    for (let i = 0; i < SIZE; i++) {
-      for (let j = 0; j < SIZE; j++) {
-        const img = images[POS]
-        const X = j * COVER_SIZE
-        const Y = i * COVER_SIZE
-
-        if (img) {
-          ctx.drawImage(img, X, Y, COVER_SIZE, COVER_SIZE)
-        } else {
-          ctx.fillStyle = 'black'
-          ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
-        }
-
-        POS++
-      }
-    }
+        await Promise.all(fns.map(async ([position, fn]) => {
+          const image = await fn()
+          ctx.globalCompositeOperation = 'destination-over'
+          ctx.drawImage(image, position[0], position[1], COVER_SIZE, COVER_SIZE)
+        }))
+      })()
+    ])
 
     return canvas
   }

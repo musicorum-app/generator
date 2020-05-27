@@ -4,6 +4,7 @@ const SpotifyAPI = require('../apis/Spotify.js')
 const SearchManager = require('./SearchManager.js')
 const path = require('path')
 const crypto = require('crypto')
+const chalk = require('chalk')
 
 module.exports = class DataManager {
   constructor (musicorum) {
@@ -26,10 +27,12 @@ module.exports = class DataManager {
     }
 
     const artist = await this.cacheManager.getArtist(artistName)
+    if (artist && artist.spotify) console.log(chalk.green('ARTIST FOUND ON CACHE'))
     if (artist && artist.spotify) return artist
     else {
       try {
-        const data = await this.searchManager.searchArtistFromSpotify(artistName)
+        const fn = () => this.searchManager.searchArtistFromSpotify(artistName)
+        const data = await this.musicorum.requestQueue.request('SPOTIFY', fn)
         if (!data) {
           console.log(data)
           return null
@@ -63,7 +66,8 @@ module.exports = class DataManager {
       })
     } else {
       try {
-        const res = await this.musicorum.lastfm.getAlbumInfo(name, artistName, true)
+        const fn = this.musicorum.lastfm.getAlbumInfo(name, artistName, true)
+        const res = await this.musicorum.requestQueue.request('SPOTIFY', () => fn())
         const newImage = res.album.image[3]['#text']
         if (!newImage) throw new Error('Error while getting the image')
         newAlbum = new CachedAlbum({
@@ -89,7 +93,8 @@ module.exports = class DataManager {
     if (track) return track
 
     try {
-      const res = await this.searchManager.searchTrackFromSpotify(name, artistName)
+      const fn = this.searchManager.searchTrackFromSpotify(name, artistName)
+      const res = await this.musicorum.requestQueue.request('SPOTIFY', () => fn())
       const newTrack = new CachedTrack(res)
       this.cacheManager.tracks.push(newTrack)
       return newTrack

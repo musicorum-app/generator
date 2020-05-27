@@ -4,6 +4,7 @@ const Spotify = require('./apis/Spotify')
 const ControlsAPI = require('./utils/ControlsAPI.js')
 const CacheManager = require('./cache/CacheManager.js')
 const DataManager = require('./managers/DataManager.js')
+const RequestQueue = require('./cache/RequestQueue.js')
 
 module.exports = class MusicorumGenerator {
   init () {
@@ -11,6 +12,7 @@ module.exports = class MusicorumGenerator {
     this.app = new App(this, process.env.PORT)
     this.cacheManager = new CacheManager(this)
     this.dataManager = new DataManager(this)
+    this.requestQueue = new RequestQueue(this)
     this.setupApis()
     this.setupTasks()
   }
