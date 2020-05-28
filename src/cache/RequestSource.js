@@ -1,5 +1,5 @@
 module.exports = {
-  // LASTFM: 'LASTFM',
-  // DEEZER: 'DEEZER',
+  LASTFM: 'LASTFM',
+  IMAGE: 'IMAGE',
   SPOTIFY: 'SPOTIFY'
 }

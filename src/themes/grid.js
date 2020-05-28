@@ -1,4 +1,4 @@
-const { CanvasUtils, MiscUtils } = require('../')
+const { CanvasUtils } = require('../')
 const Theme = require('./Theme.js')
 const { createCanvas } = require('canvas')
 const responses = require('../http/responses.js')
@@ -22,7 +22,7 @@ module.exports = class GridTheme extends Theme {
     if (!list) throw new ResponseError(404, responses.USER_NOT_FOUND)
     list = list.album || list.track || list.artist
 
-    const canvasSize = SIZE < 11 ? 1300 : 1890
+    const canvasSize = SIZE < 11 ? 1300 : SIZE > 16 ? 2400 : 1890
 
     const canvas = createCanvas(canvasSize, canvasSize)
     const ctx = canvas.getContext('2d')
@@ -145,11 +145,6 @@ module.exports = class GridTheme extends Theme {
 
     ctx.drawImage(mainImage, 0, 0, WIDTH, WIDTH)
 
-    const mapper = async i => (new Promise(resolve => {
-      resolve(this.getItemImage(top, i))
-    }))
-    const promises = []
-
     const mainItem = list.shift()
 
     if (names) {
@@ -182,22 +177,7 @@ module.exports = class GridTheme extends Theme {
       ctx.fillText(PLAYCOUNT, PLAYCOUNT_X, PLAYCOUNT_Y)
     }
 
-    list.forEach(i => {
-      promises.push(async () => (
-        mapper(i)
-      ))
-    })
-
-    const images = []
-
-    const chunks = MiscUtils.chunkArray(promises, 4)
-
-    for (let i = 0; i < chunks.length; i++) {
-      const res = await Promise.all(chunks[i].map(f => f()))
-      if (top === 'tracks') await MiscUtils.wait(400)
-      console.log('CHUNK ' + i + ' FINISHED')
-      images.push(res)
-    }
+    const images = await Promise.all(list.map(async (i) => this.getItemImage(top, i)))
 
     const IMAGE_SIZE = WIDTH / 4
 

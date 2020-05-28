@@ -5,6 +5,7 @@ const ControlsAPI = require('./utils/ControlsAPI.js')
 const CacheManager = require('./cache/CacheManager.js')
 const DataManager = require('./managers/DataManager.js')
 const RequestQueue = require('./cache/RequestQueue.js')
+const CacheFileManager = require('./cache/CacheFileManager.js')
 
 module.exports = class MusicorumGenerator {
   init () {
@@ -13,6 +14,7 @@ module.exports = class MusicorumGenerator {
     this.cacheManager = new CacheManager(this)
     this.dataManager = new DataManager(this)
     this.requestQueue = new RequestQueue(this)
+    this.cacheFileManager = new CacheFileManager(this)
     this.setupApis()
     this.setupTasks()
   }
