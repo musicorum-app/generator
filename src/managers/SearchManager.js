@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const chalk = require('chalk')
 
 const spotifyArtistRegex = /^(?:https?:\/\/|)?(?:www\.)?open\.spotify\.com\/artist\/([a-zA-Z\d-_]+)/
 const spotifyAlbumRegex = /^(?:https?:\/\/|)?(?:www\.)?open\.spotify\.com\/album\/([a-zA-Z\d-_]+)/
@@ -11,11 +12,17 @@ module.exports = class SearchManager {
   async searchArtistFromSpotify (artistName) {
     const query = encodeURIComponent(artistName)
     try {
-      console.log('REQUESTING TO SPOTIFY')
-      const spotifyArtist = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=artist&q=${query}`)
-      const spotifyObject = spotifyArtist.artists.items[0]
+      // console.log('REQUESTING TO SPOTIFY')
+      console.log('Searching for artist ' + chalk.greenBright(artistName))
+      const spotifyArtist = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=artist&q="${query}"`)
+      if (!spotifyArtist.artists.items) throw new Error('Artist not found')
+      const found = spotifyArtist.artists.items
+        .filter(a => a.images.size)
+        .find(a => a.name.toLowerCase() === artistName.toLowerCase())
+      const spotifyObject = found || spotifyArtist.artists.items[0]
 
       if (!spotifyObject) throw new Error('Artist not found.')
+      if (!spotifyObject.images.length) throw new Error('No images for the artist ' + chalk.red(spotifyObject.name) + ' from query ' + chalk.red(artistName))
 
       return {
         name: spotifyObject.name,

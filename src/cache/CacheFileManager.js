@@ -11,6 +11,10 @@ const statAsync = promisify(fs.stat)
 const writeFile = promisify(fs.writeFile)
 
 module.exports = class CacheFileManager {
+  constructor (musicorum) {
+    this.musicorum = musicorum
+  }
+
   static async loadCacheJSONFile (fileName) {
     const pathName = path.resolve(__dirname, '..', '..', 'cache', fileName)
     const data = await readFileAsync(pathName, { encoding: 'utf8' })
@@ -46,15 +50,15 @@ module.exports = class CacheFileManager {
     return size
   }
 
-  static async getImageFromCache (fileName, fallbackUrl) {
+  async getImageFromCache (fileName, fallbackUrl) {
     if (!fallbackUrl) throw new Error('Missing image url while fallbacking to url')
     const pathName = path.resolve(Constants.CACHE_IMAGE_PATH, fileName)
     return loadImage(pathName)
       .then(i => i)
       .catch(async () => {
         console.log(chalk.yellow(' CACHE FILE MANAGER ') + ' downloading from ' + fallbackUrl)
-        const res = await fetch(fallbackUrl)
-        const buffer = await res.buffer()
+        const fn = () => fetch(fallbackUrl).then(r => r.buffer())
+        const buffer = await this.musicorum.requestQueue.request('IMAGE', fn)
         CacheFileManager.saveImageFromBuffer(pathName, buffer)
         return loadImage(buffer)
       })

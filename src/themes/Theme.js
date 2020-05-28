@@ -1,4 +1,4 @@
-const { loadImage } = require('canvas')
+const { loadImage, createCanvas } = require('canvas')
 const CacheFileManager = require('../cache/CacheFileManager.js')
 const LastFM = require('../utils/LastFM.js')
 const responses = require('../http/responses.js')
@@ -17,6 +17,9 @@ module.exports = class Theme {
   async loadDefaults () {
     this.defaultArtistImage = await loadImage(path.resolve(__dirname, '..', '..', 'cache', 'artistDefault.png'))
     this.defaultAlbumImage = await loadImage(path.resolve(__dirname, '..', '..', 'cache', 'albumDefault.png'))
+    const canvas = createCanvas(1, 1)
+    canvas.getContext('2d')
+    this.blankCanvas = canvas
   }
 
   async preGenerate (options) {
@@ -37,11 +40,13 @@ module.exports = class Theme {
    * Get a image from an artist
    * @param {(string|Object)} artistObject The name of the artist OR the artist Object
    * @param {string} artistObject.name The artist name from the object
+   * @param {number} size The image size
    * @returns {Promise<Image>} The artist image in canvas item
    */
-  async getArtistImage (artistObject, that = this, size) {
-    const artist = await that.musicorum.dataManager.getArtist(artistObject)
-    return artist ? artist.getImage(size) : that.defaultArtistImage
+  async getArtistImage (artistObject, size) {
+    if (!artistObject) return this.blankCanvas
+    const artist = await this.musicorum.dataManager.getArtist(artistObject)
+    return artist ? artist.getImage(this.musicorum.cacheFileManager, size) : this.defaultArtistImage
   }
 
   /**
@@ -49,11 +54,13 @@ module.exports = class Theme {
    * @param {Object} albumObject The object from the album
    * @param {string} albumObject.name The album name
    * @param {string} albumObject.artist.name The artist name
+   * @param {number} size The image size
    * @returns {Promise<Image>} The album image in canvas item
    */
-  async getAlbumImage (albumObject, that = this, size) {
-    const album = await that.musicorum.dataManager.getAlbum(albumObject)
-    return album ? album.getImage(size) : that.defaultAlbumImage
+  async getAlbumImage (albumObject, size) {
+    if (!albumObject) return this.blankCanvas
+    const album = await this.musicorum.dataManager.getAlbum(albumObject)
+    return album ? album.getImage(this.musicorum.cacheFileManager, size) : this.defaultAlbumImage
   }
 
   /**
@@ -61,22 +68,29 @@ module.exports = class Theme {
    * @param {Object} trackObject The object from the track
    * @param {string} trackObject.name The album name
    * @param {string} trackObject.artist.name The artist name
+   * @param {number} size The image size
    * @returns {Promise<Image>} The track image in canvas item
    */
-  async getTrackImage (trackObject, that = this, size) {
-    const track = await that.musicorum.dataManager.getTrack(trackObject)
-    return track ? track.getImage() : that.defaultAlbumImage
+  async getTrackImage (trackObject, size) {
+    if (!trackObject) return this.blankCanvas
+    const track = await this.musicorum.dataManager.getTrack(trackObject)
+    return track ? track.getImage(this.musicorum.cacheFileManager) : this.defaultAlbumImage
   }
 
   async getItemImage (itemType, arg, size) {
     if (!itemType || typeof itemType !== 'string') throw new TypeError('Invalid item type from Theme.getItemImage')
     if (itemType.endsWith('s')) itemType = itemType.slice(0, -1)
     if (!['artist', 'album', 'track'].includes(itemType)) throw new TypeError(`Invalid item type ${itemType}. Must be 'artist', 'album' or 'track'`)
-    return {
-      artist: this.getArtistImage,
-      album: this.getAlbumImage,
-      track: this.getTrackImage
-    }[itemType](arg, this, size)
+    switch (itemType) {
+      case 'artist':
+        return this.getArtistImage(arg, size)
+      case 'track':
+        return this.getTrackImage(arg, size)
+      case 'album':
+        return this.getAlbumImage(arg, size)
+      default:
+        return null
+    }
   }
 
   async loadUserImage (userObject, size) {
@@ -84,15 +98,18 @@ module.exports = class Theme {
     return CacheFileManager.getImageFromCache('userDefault.png', 'https://lastfm-img2.akamaized.net/i/u/avatar670/818148bf682d429dc215c1705eb27b98')
   }
 
+  /**
+   * @deprecated
+   */
   async getMultipleArtists (artists) {
     return this.musicorum.dataManager.getMultipleArtists(artists)
   }
 
-  async generate (options) {
+  async generate () {
     throw new Error('Missing theme generate function')
   }
 
-  async generateStory (options) {
+  async generateStory () {
     throw new Error('Missing instagram theme generate function')
   }
 }
