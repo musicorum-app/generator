@@ -17,7 +17,7 @@ module.exports = class SearchManager {
       const spotifyArtist = await this.musicorum.spotify.request(`https://api.spotify.com/v1/search?type=artist&q="${query}"`)
       if (!spotifyArtist.artists.items) throw new Error('Artist not found')
       const found = spotifyArtist.artists.items
-        .filter(a => a.images.size)
+        .filter(a => a.images.length)
         .find(a => a.name.toLowerCase() === artistName.toLowerCase())
       const spotifyObject = found || spotifyArtist.artists.items[0]
 
