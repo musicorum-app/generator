@@ -189,7 +189,7 @@ module.exports = class GridTheme extends Theme {
 
         const item = list[POS]
 
-        ctx.drawImage(images[i][j], X, Y, IMAGE_SIZE, IMAGE_SIZE)
+        ctx.drawImage(images[POS], X, Y, IMAGE_SIZE, IMAGE_SIZE)
 
         if (names) {
           const GRADIENT = ctx.createLinearGradient(X, Y, X, Y + IMAGE_SIZE)
