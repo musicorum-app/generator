@@ -78,6 +78,7 @@ module.exports = class TopsTheme extends Theme {
 
     for (let t = 0; t < lists.length; t++) {
       const list = lists[t]
+      if (!list[0]) continue
       const X_MODULE_CENTER = WIDTH / 2 + (t === 1 ? MODULE_INNER_MARGIN : -Math.abs(MODULE_INNER_MARGIN))
       const COVER_X = X_MODULE_CENTER - COVER_SIZE / 2
 
@@ -93,6 +94,7 @@ module.exports = class TopsTheme extends Theme {
       ctx.fillText(modules[t].message, X_MODULE_CENTER - (TOP_TITLE_W / 2), COVER_Y - 10)
 
       ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+      console.log(list[0])
       const NAME_W = ctx.measureText(list[0].name).width
       ctx.fillText(list[0].name, X_MODULE_CENTER - (NAME_W / 2), COVER_MARGIN)
 

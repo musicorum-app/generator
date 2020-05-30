@@ -95,7 +95,7 @@ module.exports = class Theme {
 
   async loadUserImage (userObject, size) {
     if (userObject.image[0]['#text']) return loadImage(LastFM.getBestImage(userObject.image, size))
-    return CacheFileManager.getImageFromCache('userDefault.png', 'https://lastfm-img2.akamaized.net/i/u/avatar670/818148bf682d429dc215c1705eb27b98')
+    return this.musicorum.cacheFileManager.getImageFromCache('userDefault.png', 'https://lastfm-img2.akamaized.net/i/u/avatar670/818148bf682d429dc215c1705eb27b98')
   }
 
   /**
