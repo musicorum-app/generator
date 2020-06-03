@@ -88,7 +88,7 @@ module.exports = class TopsTheme extends Theme {
 
       ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
 
-      ctx.font = '15px "RobotoCondensed Light, Code2000"'
+      ctx.font = '15px "RobotoCondensed Light, ArialUnicode"'
       ctx.fillStyle = 'rgba(255, 255, 255, .6)'
       const TOP_TITLE_W = ctx.measureText(modules[t].message).width
       ctx.fillText(modules[t].message, X_MODULE_CENTER - (TOP_TITLE_W / 2), COVER_Y - 10)
@@ -190,7 +190,7 @@ module.exports = class TopsTheme extends Theme {
     const AVATAR_Y = 120
     const AVATAR_SIZE = 500
 
-    ctx.font = '40px "ProductSans, Code2000"'
+    ctx.font = '40px "ProductSans, ArialUnicode"'
     ctx.fillStyle = 'rgb(255, 255, 255)'
     const TITLE_W = ctx.measureText(title).width
     ctx.fillText(title, CENTER_X - (TITLE_W / 2), 75)
@@ -230,7 +230,7 @@ module.exports = class TopsTheme extends Theme {
 
       ctx.drawImage(img, COVER_X, COVER_Y, COVER_SIZE, COVER_SIZE)
 
-      ctx.font = '15px "Roboto Light, Code2000"'
+      ctx.font = '15px "Roboto Light, ArialUnicode"'
       ctx.fillStyle = 'rgba(255, 255, 255, .6)'
       ctx.textAlign = 'center'
       ctx.fillText(modules[t].message, X_MODULE_CENTER, COVER_Y - 10)
@@ -239,12 +239,12 @@ module.exports = class TopsTheme extends Theme {
 
       ctx.fillStyle = 'rgba(255, 255, 255, 1)'
       ctx.writeScalableText(list[0].name, X_MODULE_CENTER, COVER_Y + COVER_SIZE + 35,
-        MAX_WIDTH, '%S%px "RobotoCondensed Light, Code2000"', 29)
+        MAX_WIDTH, '%S%px "RobotoCondensed Light, ArialUnicode"', 29)
 
       if (modules[t].type !== 'artists') {
         ctx.fillStyle = 'rgba(255, 255, 255, .5)'
         ctx.writeScalableText(list[0].artist.name, X_MODULE_CENTER, COVER_Y + COVER_SIZE + 65,
-          MAX_WIDTH, '%S%px "RobotoCondensed Light, Code2000"', 20)
+          MAX_WIDTH, '%S%px "RobotoCondensed Light, ArialUnicode"', 20)
       }
 
       // const TOP_LIST_MARGIN = 80

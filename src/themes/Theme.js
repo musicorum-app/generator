@@ -63,6 +63,10 @@ module.exports = class Theme {
     return album ? album.getImage(this.musicorum.cacheFileManager, size) : this.defaultAlbumImage
   }
 
+  async getAlbumFromCache (albumObject) {
+    return this.musicorum.dataManager.getAlbum(albumObject)
+  }
+
   /**
    * Get a image from an track
    * @param {Object} trackObject The object from the track

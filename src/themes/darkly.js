@@ -105,7 +105,7 @@ module.exports = class DarklyTheme extends Theme {
         const LIST_ITEM_X = X_MODULE
         const LIST_ITEM_Y = Y_MODULE + (i * LIST_MARGIN) + 40
         ctx.writeScalableText(text, LIST_ITEM_X, LIST_ITEM_Y,
-          (WIDTH / 2) - MODULE_MARGIN * 2, '%S%px Montserrat, Code2000', 30)
+          (WIDTH / 2) - MODULE_MARGIN * 2, '%S%px Montserrat, ArialUnicode', 30)
       }
     }
 
@@ -204,7 +204,7 @@ module.exports = class DarklyTheme extends Theme {
         const LIST_ITEM_X = X_MODULE
         const LIST_ITEM_Y = Y_MODULE + (i * LIST_MARGIN) + 46
         ctx.writeScalableText(text, LIST_ITEM_X, LIST_ITEM_Y,
-          WIDTH - IMAGE_SIZE - MODULE_MARGIN * 2, '%S%px Montserrat, Code2000', 30)
+          WIDTH - IMAGE_SIZE - MODULE_MARGIN * 2, '%S%px Montserrat, ArialUnicode', 30)
       }
     }
 

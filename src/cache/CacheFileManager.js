@@ -50,6 +50,19 @@ module.exports = class CacheFileManager {
     return size
   }
 
+  async getBufferImageFromCache (fileName, fallbackUrl) {
+    const pathName = path.resolve(Constants.CACHE_IMAGE_PATH, fileName)
+    return readFileAsync(pathName)
+      .then(i => Buffer.from(i))
+      .catch(async () => {
+        console.log(chalk.yellow(' CACHE FILE MANAGER ') + ' downloading from ' + fallbackUrl)
+        const fn = () => fetch(fallbackUrl).then(r => r.buffer())
+        const buffer = await this.musicorum.requestQueue.request('IMAGE', fn)
+        CacheFileManager.saveImageFromBuffer(pathName, buffer)
+        return buffer
+      })
+  }
+
   async getImageFromCache (fileName, fallbackUrl) {
     if (!fallbackUrl) throw new Error('Missing image url while fallbacking to url')
     const pathName = path.resolve(Constants.CACHE_IMAGE_PATH, fileName)
