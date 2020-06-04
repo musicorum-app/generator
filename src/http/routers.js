@@ -5,7 +5,8 @@ const router = Router()
 const sharp = require('sharp')
 const Sentry = require('@sentry/node')
 const crypto = require('crypto')
-const MiscUtils = require('../utils/MiscUtils.js')
+
+const testCover = require('../covers/test.js')
 
 Sentry.init({ dsn: 'https://71e513cd826c403a98df4e163b510f75@o379578.ingest.sentry.io/5214235' })
 
@@ -65,47 +66,25 @@ module.exports = class Routers {
         res.status(405).json(responses.METHOD_NOT_ALLOWED)
       })
 
-    router.route('/cache/artists')
+    router.route('/covers/generate')
       .post(async (req, res) => {
+        const { user, image, raw } = req.body
         const { authorization } = req.headers
         if (authorization !== process.env.API_ADMIN_TOKEN) return res.status(403).json(responses.METHOD_NOT_ALLOWED)
-        const { artists } = req.body
 
-        if (!artists) return res.status(400).json(responses.MISSING_PARAMS)
-        if (!Array.isArray(artists)) return res.status(400).json(responses.INVALID_PARAMS)
-        if (!artists.length) return res.status(400).json(responses.INVALID_PARAMS)
-
-        const mapper = async a => (new Promise(resolve => {
-          resolve(this.musicorum.dataManager.getArtist(a))
-        }))
-        const promises = []
-
-        artists.forEach(a => {
-          promises.push(async () => (
-            mapper(a)
-          ))
-        })
-        const ids = []
-
-        const chunks = MiscUtils.chunkArray(promises, 5)
-
-        for (let i = 0; i < chunks.length; i++) {
-          const res = await Promise.all(chunks[i].map(f => f()))
-          await MiscUtils.wait(300)
-          ids.push(...res.filter(r => !!r).map(r => r.spotify))
+        const canvas = await testCover(user, image)
+        if (raw && !!process.env.ALLOW_RAW) {
+          res.setHeader('Content-Type', 'image/png')
+          canvas.pngStream().pipe(res)
+          return
         }
-
         res.json({
-          artists: ids
+          base64: canvas.toDataURL('image/jpeg', 0.8)
         })
       })
       .all((_, res) => {
         res.status(405).json(responses.METHOD_NOT_ALLOWED)
       })
-
-    router.all('*', (_, res) => {
-      res.status(404).json(responses.ENDPOINT_NOT_FOUND)
-    })
   }
 
   get router () {
