@@ -10,7 +10,7 @@ module.exports = class DataManager {
     this.musicorum = musicorum
     this.cacheManager = musicorum.cacheManager
     this.searchManager = new SearchManager(musicorum)
-    this.loadDefaults()
+    // this.loadDefaults()
   }
 
   async loadDefaults () {
@@ -26,10 +26,12 @@ module.exports = class DataManager {
     }
 
     const artist = await this.cacheManager.getArtist(artistName)
+    // if (artist && artist.spotify) console.log(chalk.green('ARTIST FOUND ON CACHE'))
     if (artist && artist.spotify) return artist
     else {
       try {
-        const data = await this.searchManager.searchArtistFromSpotify(artistName)
+        const fn = () => this.searchManager.searchArtistFromSpotify(artistName)
+        const data = await this.musicorum.requestQueue.request('SPOTIFY', fn)
         if (!data) {
           console.log(data)
           return null
@@ -47,7 +49,7 @@ module.exports = class DataManager {
 
   async getAlbum ({ name, artist, image: albumImage }) {
     const artistName = artist['#text'] || artist.name
-    const album = this.cacheManager.getAlbum(name, artistName)
+    const album = await this.cacheManager.getAlbum(name, artistName)
 
     if (album) return album
 
@@ -63,7 +65,8 @@ module.exports = class DataManager {
       })
     } else {
       try {
-        const res = await this.musicorum.lastfm.getAlbumInfo(name, artistName, true)
+        const fn = () => this.musicorum.lastfm.getAlbumInfo(name, artistName, true)
+        const res = await this.musicorum.requestQueue.request('LASTFM', fn)
         const newImage = res.album.image[3]['#text']
         if (!newImage) throw new Error('Error while getting the image')
         newAlbum = new CachedAlbum({
@@ -84,12 +87,13 @@ module.exports = class DataManager {
 
   async getTrack ({ name, artist, image: albumImage }) {
     const artistName = artist['#text'] || artist.name
-    const track = this.cacheManager.getTrack(name, artistName)
+    const track = await this.cacheManager.getTrack(name, artistName)
 
     if (track) return track
 
     try {
-      const res = await this.searchManager.searchTrackFromSpotify(name, artistName)
+      const fn = () => this.searchManager.searchTrackFromSpotify(name, artistName)
+      const res = await this.musicorum.requestQueue.request('SPOTIFY', fn)
       const newTrack = new CachedTrack(res)
       this.cacheManager.tracks.push(newTrack)
       return newTrack

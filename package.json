@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "start-dev": "nodemon --exec node --ignore 'cache/*' -r dotenv/config index.js",
+    "start-dev": "nodemon --exec node --ignore '*.json' -r dotenv/config index.js",
     "start-env": "node -r dotenv/config index.js"
   },
   "author": "metehus",

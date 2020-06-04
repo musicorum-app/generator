@@ -13,7 +13,8 @@ const colorsPallete = {
   divergent: ['#7a004f', '#80f8f8'],
   sun: ['#EA1264', '#D7FD31'],
   yellish: ['#141209', '#ffea00'],
-  horror: ['#000000', '#dc2c2c']
+  horror: ['#000000', '#dc2c2c'],
+  sea: ['#0239d8', '#68ebc1']
 }
 
 module.exports = class DuoToneTheme extends Theme {
@@ -233,7 +234,7 @@ module.exports = class DuoToneTheme extends Theme {
       const IMAGE_MARGIN_X = IMAGE_MARGIN_Y
       const IMAGE_STARTING_Y = WIDTH - IMAGE_MARGIN_Y - IMAGE_SIZE
       const IMAGE_X = (i >= 4 ? IMAGE_STARTING_Y : IMAGE_STARTING_Y - IMAGE_SIZE - IMAGE_MARGIN_X)
-      const SECOND_ROW_Y = i >= 4 ? 0 : IMAGE_SIZE + IMAGE_MARGIN_Y
+      const SECOND_ROW_Y = i < 4 ? 0 : IMAGE_SIZE + IMAGE_MARGIN_Y
       const IMAGE_Y = AVATAR_SIZE + AVATAR_Y + 40 + IMAGE_MARGIN_Y + (IMAGE_SIZE + IMAGE_MARGIN_Y) * (i >= 4 ? i - 4 : i) + SECOND_ROW_Y
 
       ctx.drawDuotoneImage(image, colors, IMAGE_X, IMAGE_Y, IMAGE_SIZE, IMAGE_SIZE)

@@ -17,3 +17,7 @@ This is a canvas-based image generator for the Musicorum App.
 
 ### duotone
 ![example](https://i.imgur.com/KrWsWc4.png)
+
+
+### darkly
+![example](https://share.musc.pw/9gZsUS.jpg)
