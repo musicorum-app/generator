@@ -10,6 +10,10 @@ const ASSETS_SRC = path.resolve(__dirname, '..', 'assets')
 const writeFile = promisify(fs.writeFile)
 
 module.exports = class CanvasUtils {
+  static get assetsSrc () {
+    return ASSETS_SRC
+  }
+
   static init () {
     Context2d.prototype.writeScalableText = function (text, x, y, maxWidth, style, startingSize) {
       this.font = style.replace('%S%', startingSize)
