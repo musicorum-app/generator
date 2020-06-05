@@ -21,3 +21,8 @@ This is a canvas-based image generator for the Musicorum App.
 
 ### darkly
 ![example](https://share.musc.pw/9gZsUS.jpg)
+
+
+### Pride 2020
+![ex](https://pbs.twimg.com/media/EZoc8y3X0AAoOiZ?format=jpg)
+![ex](https://pbs.twimg.com/media/EZoc9vGWAAAiqmt?format=jpg)
