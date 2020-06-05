@@ -6,6 +6,7 @@ const ResponseError = require('../http/ResponseError.js')
 const getColors = require('get-image-colors')
 const FileType = require('file-type')
 const chroma = require('chroma-js')
+const MiscUtils = require('../utils/MiscUtils.js')
 
 CanvasUtils.init()
 CanvasUtils.registerFonts()
@@ -75,7 +76,8 @@ module.exports = class PrideTheme extends Theme {
       try {
         const album = await this.getAlbumFromCache(a)
         if (!album) return null
-        const img = await album.getBufferImage(this.musicorum.cacheFileManager)
+        const fn = () => album.getBufferImage(this.musicorum.cacheFileManager)
+        const img = await this.musicorum.requestQueue.request('IMAGE_READ', fn)
         const { mime } = await FileType.fromBuffer(img)
         const palette = await getColors(img, {
           count: 1,
@@ -88,7 +90,6 @@ module.exports = class PrideTheme extends Theme {
         }
       } catch (e) {
         console.error(e)
-        return null
       }
     }))
 
@@ -116,6 +117,7 @@ module.exports = class PrideTheme extends Theme {
       if (selectedFlag === 'lgbt') {
         images.splice(0, n)
       }
+      await MiscUtils.wait(400)
     }
 
     console.log(images[0])
