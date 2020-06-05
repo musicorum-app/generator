@@ -66,7 +66,7 @@ module.exports = class PrideTheme extends Theme {
     const CANVAS_SIZE_X = COVER_SIZE * SIZE_X
     const CANVAS_SIZE_Y = COVER_SIZE * SIZE_Y
 
-    const albums = await lastfm.getList(user, 'albums', 'overall', 300)
+    const albums = await lastfm.getList(user, 'albums', 'overall', 100)
     console.log('request done.')
 
     const canvas = createCanvas(CANVAS_SIZE_X, CANVAS_SIZE_Y)
