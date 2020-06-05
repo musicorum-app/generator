@@ -222,8 +222,8 @@ module.exports = class CanvasUtils {
   }
 
   static registerFonts () {
-    // Code2000 fallback
-    registerFont(ASSETS_SRC + '/fonts/code2000.ttf', { family: 'Code2000' })
+    // Unicode fallback
+    registerFont(ASSETS_SRC + '/fonts/Arial-Unicode-MS.ttf', { family: 'ArialUnicode' })
     // Roboto
     registerFont(ASSETS_SRC + '/fonts/RobotoCondensed-Bold.ttf', { family: 'RobotoCondensed', weight: 'bold' })
     registerFont(ASSETS_SRC + '/fonts/RobotoCondensed-BoldItalic.ttf', { family: 'RobotoCondensed', weight: 'bold', style: 'italic' })

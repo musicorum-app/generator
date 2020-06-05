@@ -55,15 +55,15 @@ module.exports = class GridTheme extends Theme {
               ctx.fillStyle = GRADIENT
               ctx.fillRect(X, Y, COVER_SIZE, COVER_SIZE)
 
-              ctx.font = 'bold 15px "RobotoCondensed, Code2000"'
+              ctx.font = 'bold 15px "RobotoCondensed, ArialUnicode"'
               ctx.fillStyle = 'rgb(255, 255, 255)'
               ctx.writeScalableText(item.name, X + 5, Y + 5 + 16 + (SIZE > 9 ? -8 : 0), COVER_SIZE - 10,
-                'bold %S%px "RobotoCondensed, Code2000"', SIZE > 9 ? 13 : 15)
-              ctx.font = '13px "RobotoCondensed-Light, Code2000"'
+                'bold %S%px "RobotoCondensed, ArialUnicode"', SIZE > 9 ? 13 : 15)
+              ctx.font = '13px "RobotoCondensed-Light, ArialUnicode"'
               if (top === 'albums' || top === 'tracks') {
                 ctx.fillStyle = 'rgb(240, 240, 240)'
                 ctx.writeScalableText(item.artist.name, X + 5, Y + 5 + 30 + (SIZE > 9 ? -8 : 0),
-                  COVER_SIZE - 10, '%S%px "RobotoCondensed-Light, Code2000"', SIZE > 9 ? 10 : 13)
+                  COVER_SIZE - 10, '%S%px "RobotoCondensed-Light, ArialUnicode"', SIZE > 9 ? 10 : 13)
               }
             }
 
@@ -156,15 +156,15 @@ module.exports = class GridTheme extends Theme {
       ctx.fillStyle = GRADIENT
       ctx.fillRect(0, 0, WIDTH, WIDTH)
 
-      ctx.font = 'bold 20px "RobotoCondensed, Code2000"'
+      ctx.font = 'bold 20px "RobotoCondensed, ArialUnicode"'
       ctx.fillStyle = 'rgb(255, 255, 255)'
       ctx.writeScalableText(mainItem.name, 5, WIDTH - 5 - 30, WIDTH - 100,
-        'bold %S%px "RobotoCondensed, Code2000"', 20)
-      ctx.font = '16px "RobotoCondensed-Light, Code2000"'
+        'bold %S%px "RobotoCondensed, ArialUnicode"', 20)
+      ctx.font = '16px "RobotoCondensed-Light, ArialUnicode"'
       if (top === 'albums' || top === 'tracks') {
         ctx.fillStyle = 'rgb(240, 240, 240)'
         ctx.writeScalableText(mainItem.artist.name, 5, WIDTH - 5 - 13,
-          WIDTH - 100, '%S%px "RobotoCondensed-Light, Code2000"', 16)
+          WIDTH - 100, '%S%px "RobotoCondensed-Light, ArialUnicode"', 16)
       }
     }
 
@@ -189,7 +189,7 @@ module.exports = class GridTheme extends Theme {
 
         const item = list[POS]
 
-        ctx.drawImage(images[i][j], X, Y, IMAGE_SIZE, IMAGE_SIZE)
+        ctx.drawImage(images[POS], X, Y, IMAGE_SIZE, IMAGE_SIZE)
 
         if (names) {
           const GRADIENT = ctx.createLinearGradient(X, Y, X, Y + IMAGE_SIZE)
@@ -200,15 +200,15 @@ module.exports = class GridTheme extends Theme {
           ctx.fillStyle = GRADIENT
           ctx.fillRect(X, Y, IMAGE_SIZE, IMAGE_SIZE)
 
-          ctx.font = 'bold 15px "RobotoCondensed, Code2000"'
+          ctx.font = 'bold 15px "RobotoCondensed, ArialUnicode"'
           ctx.fillStyle = 'rgb(255, 255, 255)'
           ctx.writeScalableText(item.name, X + 5, Y + 5 + 16, IMAGE_SIZE - 10,
-            'bold %S%px "RobotoCondensed, Code2000"', 15)
-          ctx.font = '13px "RobotoCondensed-Light, Code2000"'
+            'bold %S%px "RobotoCondensed, ArialUnicode"', 15)
+          ctx.font = '13px "RobotoCondensed-Light, ArialUnicode"'
           if (top === 'albums' || top === 'tracks') {
             ctx.fillStyle = 'rgb(240, 240, 240)'
             ctx.writeScalableText(item.artist.name, X + 5, Y + 5 + 30,
-              IMAGE_SIZE - 10, '%S%px "RobotoCondensed-Light, Code2000"', 13)
+              IMAGE_SIZE - 10, '%S%px "RobotoCondensed-Light, ArialUnicode"', 13)
           }
         }
 

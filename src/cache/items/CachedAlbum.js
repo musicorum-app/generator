@@ -19,4 +19,12 @@ module.exports = class CachedAlbum {
       return loadImage(path.resolve(__dirname, '..', '..', '..', 'cache', 'albumDefault.png'))
     }
   }
+
+  getBufferImage (cfm) {
+    try {
+      return cfm.getBufferImageFromCache(this.imageID + '_H', this.image)
+    } catch (e) {
+      return loadImage(path.resolve(__dirname, '..', '..', '..', 'cache', 'albumDefault.png'))
+    }
+  }
 }
