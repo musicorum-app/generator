@@ -16,6 +16,10 @@ const flags = {
     colors: ['#f00', '#FF8E00', '#ffff7d', '#00ff00', '#00C0C0', '#00f', '#8E008E'],
     rows: [1, 1, 1, 1, 1, 1, 1]
   },
+  gay: {
+    colors: ['#078e70', '#26ceaa', '#98e8c1', '#fff', '#7bade2', '#5049cb', '#3d1a78'],
+    rows: [1, 1, 1, 1, 1, 1, 1]
+  },
   lesbian: {
     colors: ['#D42C00', '#FD9855', '#fff', '#D161A2', '#A20161'],
     rows: [1, 1, 1, 1, 1]
