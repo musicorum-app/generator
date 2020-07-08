@@ -5,6 +5,9 @@
   <a href="https://medium.com/musicorum">
     <img src="https://img.shields.io/badge/Medium%20blog-%40musicorum-brightgreen" />
   </a>
+  <a href="https://twitter.com/intent/follow?screen_name=musicorumapp">
+    <img src="https://img.shields.io/twitter/follow/musicorumapp.svg?style=social" />
+  </a>
 </p>
 
 This is a canvas-based image generator for the [Musicorum App](https://musicorumapp.com), using data from [Last.fm](https://last.fm) and [Spotify](https://developer.spotify.com/) to create images.
