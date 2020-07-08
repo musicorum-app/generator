@@ -7,7 +7,7 @@
   </a>
 </p>
 
-This is a canvas-based image generator for the Musicorum App, using data from [Last.fm](https://last.fm) and [Spotify](https://developer.spotify.com/) to create images.
+This is a canvas-based image generator for the [Musicorum App](https://musicorumapp.com), using data from [Last.fm](https://last.fm) and [Spotify](https://developer.spotify.com/) to create images.
 
 ## Themes
 ### grid
