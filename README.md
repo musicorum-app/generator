@@ -1,5 +1,8 @@
 <p align="center">
   <img src="https://i.imgur.com/PsrxClV.png" /><br />
+  <a href="https://www.jetbrains.com/?from=musicorum">
+    <img src="https://img.shields.io/badge/Powered_by_Webstorm-gray.svg?logo=webstorm" />
+  </a>
   <img src="https://github.com/musicorum-app/generator/workflows/Docker%20Image%20CI/badge.svg?branch=master" />
   <img src="https://img.shields.io/github/license/musicorum-app/generator" />
   <a href="https://medium.com/musicorum">
