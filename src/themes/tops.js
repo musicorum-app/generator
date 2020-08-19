@@ -141,9 +141,7 @@ module.exports = class TopsTheme extends Theme {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
     ctx.fillText('musicorumapp.com', WIDTH - CREDIT_MARGIN, HEIGHT - CREDIT_MARGIN)
 
-    const [avatar] = await Promise.all([
-      loadImage(userInfo.image[0]['#text'] ? LastFM.getBestImage(userInfo.image, 300) : 'https://lastfm-img2.akamaized.net/i/u/avatar320/818148bf682d429dc215c1705eb27b98')
-    ])
+    const avatar = await this.loadUserImage(userInfo, 300)
 
     ctx.roundImage(avatar, CENTER_X - (AVATAR_SIZE / 2), AVATAR_Y, AVATAR_SIZE, AVATAR_SIZE)
 
