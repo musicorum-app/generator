@@ -16,19 +16,19 @@
 This is a canvas-based image generator for the [Musicorum App](https://musicorumapp.com), using data from [Last.fm](https://last.fm) and [Spotify](https://developer.spotify.com/) to create images.
 
 ## Themes
-### grid
+### Grid
 ![example](https://i.imgur.com/rj4935v.jpg)
 
 
-### tops
+### Tops
 ![example](https://i.imgur.com/ZwfQtD7.jpg)
 
 
-### duotone
+### Duotone
 ![example](https://i.imgur.com/KrWsWc4.png)
 
 
-### darkly
+### Darkly
 ![example](https://share.musc.pw/9gZsUS.jpg)
 
 
