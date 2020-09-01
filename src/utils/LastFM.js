@@ -75,7 +75,7 @@ module.exports = class LastFM {
         url = images[0]['#text']
       }
     }
-    return url.replace(REGEX, `/${size}x${size}/`)
+    return url
   }
 
   async getImageURLFromSpotify ([item], type) {
