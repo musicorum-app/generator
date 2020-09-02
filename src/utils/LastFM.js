@@ -15,13 +15,23 @@ module.exports = class LastFM {
   }
 
   async getUserTop (user, top, period, limit) {
-    const params = { user, period, limit }
+    const params = {
+      user,
+      period,
+      limit
+    }
     return this.request('user.gettop' + top, params)
   }
 
   async getRecentTracks (user, from, to, extended, limit = 50) {
     extended = extended ? 1 : 0
-    return this.request('user.getRecentTracks', { user, from, to, extended, limit })
+    return this.request('user.getRecentTracks', {
+      user,
+      from,
+      to,
+      extended,
+      limit
+    })
   }
 
   async getList (user, top, period, limit) {
@@ -36,7 +46,11 @@ module.exports = class LastFM {
   }
 
   async getAlbumInfo (album, artist, autocorrect) {
-    return this.request('album.getInfo', { album, artist, autocorrect: autocorrect ? 1 : 0 })
+    return this.request('album.getInfo', {
+      album,
+      artist,
+      autocorrect: autocorrect ? 1 : 0
+    })
   }
 
   async getTotalScrobblesFromTimestamp (user, from, to) {
@@ -75,7 +89,14 @@ module.exports = class LastFM {
         url = images[0]['#text']
       }
     }
+    console.log('User profile image: ' + url.replace(REGEX, `/${size}x${size}/`)
+      .replace('.png', '.jpg')
+      .replace('.gif', '.jpg')
+      .replace('.webp', '.jpg'))
     return url.replace(REGEX, `/${size}x${size}/`)
+      .replace('.png', '.jpg')
+      .replace('.gif', '.jpg')
+      .replace('.webp', '.jpg')
   }
 
   async getImageURLFromSpotify ([item], type) {
