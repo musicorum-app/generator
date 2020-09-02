@@ -63,6 +63,10 @@ module.exports = class Theme {
     return album ? album.getImage(this.musicorum.cacheFileManager, size) : this.defaultAlbumImage
   }
 
+  async getAlbumFromCache (albumObject) {
+    return this.musicorum.dataManager.getAlbum(albumObject)
+  }
+
   /**
    * Get a image from an track
    * @param {Object} trackObject The object from the track
@@ -95,7 +99,7 @@ module.exports = class Theme {
 
   async loadUserImage (userObject, size) {
     if (userObject.image[0]['#text']) return loadImage(LastFM.getBestImage(userObject.image, size))
-    return CacheFileManager.getImageFromCache('userDefault.png', 'https://lastfm-img2.akamaized.net/i/u/avatar670/818148bf682d429dc215c1705eb27b98')
+    return this.musicorum.cacheFileManager.getImageFromCache('userDefault.png', 'https://lastfm.freetls.fastly.net/i/u/300x300/818148bf682d429dc215c1705eb27b98.png')
   }
 
   /**

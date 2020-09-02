@@ -105,7 +105,7 @@ module.exports = class DarklyTheme extends Theme {
         const LIST_ITEM_X = X_MODULE
         const LIST_ITEM_Y = Y_MODULE + (i * LIST_MARGIN) + 40
         ctx.writeScalableText(text, LIST_ITEM_X, LIST_ITEM_Y,
-          (WIDTH / 2) - MODULE_MARGIN * 2, '%S%px Montserrat, Code2000', 30)
+          (WIDTH / 2) - MODULE_MARGIN * 2, '%S%px Montserrat, ArialUnicode', 30)
       }
     }
 
@@ -115,9 +115,7 @@ module.exports = class DarklyTheme extends Theme {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
     ctx.fillText('musicorumapp.com', WIDTH - CREDIT_MARGIN, HEIGHT - CREDIT_MARGIN)
 
-    const [avatar] = await Promise.all([
-      loadImage(userInfo.image[0]['#text'] ? LastFM.getBestImage(userInfo.image, 300) : 'https://lastfm-img2.akamaized.net/i/u/avatar320/818148bf682d429dc215c1705eb27b98')
-    ])
+    const avatar = await this.loadUserImage(userInfo, 300)
 
     ctx.drawImage(avatar, AVATAR_MARGIN, AVATAR_MARGIN, AVATAR_SIZE, AVATAR_SIZE)
 
@@ -204,7 +202,7 @@ module.exports = class DarklyTheme extends Theme {
         const LIST_ITEM_X = X_MODULE
         const LIST_ITEM_Y = Y_MODULE + (i * LIST_MARGIN) + 46
         ctx.writeScalableText(text, LIST_ITEM_X, LIST_ITEM_Y,
-          WIDTH - IMAGE_SIZE - MODULE_MARGIN * 2, '%S%px Montserrat, Code2000', 30)
+          WIDTH - IMAGE_SIZE - MODULE_MARGIN * 2, '%S%px Montserrat, ArialUnicode', 30)
       }
     }
 

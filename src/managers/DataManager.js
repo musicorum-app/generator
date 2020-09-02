@@ -64,6 +64,7 @@ module.exports = class DataManager {
         imageID: `R_L${crypto.randomBytes(8).toString('hex').toUpperCase()}`
       })
     } else {
+      return null
       try {
         const fn = () => this.musicorum.lastfm.getAlbumInfo(name, artistName, true)
         const res = await this.musicorum.requestQueue.request('LASTFM', fn)
