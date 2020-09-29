@@ -72,15 +72,22 @@ module.exports = class Routers {
         const { authorization } = req.headers
         if (authorization !== process.env.API_ADMIN_TOKEN) return res.status(403).json(responses.METHOD_NOT_ALLOWED)
 
-        const canvas = await testCover(user, image)
-        if (raw && !!process.env.ALLOW_RAW) {
-          res.setHeader('Content-Type', 'image/png')
-          canvas.pngStream().pipe(res)
-          return
+        try {
+          const canvas = await testCover(user, image)
+
+          if (raw && !!process.env.ALLOW_RAW) {
+            res.setHeader('Content-Type', 'image/png')
+            canvas.pngStream().pipe(res)
+            return
+          }
+          res.json({
+            base64: canvas.toDataURL('image/jpeg', 0.99)
+          })
+        } catch (e) {
+          console.error(e)
+          res.status(500).json({})
         }
-        res.json({
-          base64: canvas.toDataURL('image/jpeg', 0.8)
-        })
+
       })
       .all((_, res) => {
         res.status(405).json(responses.METHOD_NOT_ALLOWED)
