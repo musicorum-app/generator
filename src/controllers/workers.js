@@ -1,6 +1,8 @@
 import fetch from 'node-fetch'
 import { handleURL } from '../utils'
 import Worker from '../models/Worker'
+import HTTPErrorMessage from '../utils/HTTPErrorMessage'
+import messages from '../messages'
 
 export default class WorkersController {
   constructor ({ logger }) {
@@ -58,6 +60,7 @@ export default class WorkersController {
   }
 
   getWorkerByTheme (theme) {
+    if (!this.themeWorkers[theme] || this.themeWorkers[theme].length === 0) throw new HTTPErrorMessage(messages.NO_AVAILABLE_WORKER)
     return this.themeWorkers[theme][0]
   }
 }

@@ -7,3 +7,7 @@ result_url: https://result.musicorumapp.com/
 #result_url: file:///D:/Projects/Musicorum/share/export/
 
 resource_url: https://resource.musicorumapp.com/
+
+auth:
+  twitter:
+    callback: http://localhost:4030/auth/social/twitter

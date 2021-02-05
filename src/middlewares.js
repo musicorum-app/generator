@@ -23,6 +23,7 @@ export const authenticationMiddleware = (applicationsController, showSuccess = f
 
   if (!req.meta) req.meta = {}
   req.meta.app = app
+  req.meta.authType = prefix
 
   next()
   console.log('Authentication middleware took ' + ((new Date().getTime()) - s) + 'ms.')

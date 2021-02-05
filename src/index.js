@@ -5,11 +5,13 @@ import routes from './routes'
 import { version } from '../package.json'
 import messages from './messages'
 import chalk from 'chalk'
-import LastFm  from 'lastfm-node-client'
+import LastFm from 'lastfm-node-client'
 import DatabaseController from './controllers/database'
 import RedisController from './controllers/redis'
 import ApplicationsController from './controllers/applications'
 import WorkersController from './controllers/workers'
+import TwitterAuthController from './controllers/twitter'
+import UsersController from './controllers/users'
 
 const logger = setupLogger()
 const database = new DatabaseController({ logger })
@@ -23,17 +25,19 @@ const ctx = {
   lastfm
 }
 
-const applicationsController = new ApplicationsController(ctx)
-const workersController = new WorkersController(ctx)
+ctx.applicationsController = new ApplicationsController(ctx)
+ctx.workersController = new WorkersController(ctx)
+ctx.twitterController = new TwitterAuthController(ctx)
+ctx.usersController = new UsersController(ctx)
 
-logger.info(`Starting Musicorum Generator gateway ${version}`)
+logger.info(`Starting Musicorum API ${version}`)
 
 const app = express()
 app.use(express.json())
 app.use(cors())
 
 app.use((_, res, next) => {
-  res.append('Musicorum-Generator-Version', version)
+  res.append('Musicorum-API-Version', version)
   next()
 })
 
@@ -42,9 +46,7 @@ const loadRoutes = async () => {
   for (const route of routes) {
     route({
       ...ctx,
-      router,
-      applicationsController,
-      workersController
+      router
     })
   }
   return router
@@ -56,7 +58,7 @@ loadRoutes()
   .then(router => app.use(router))
   .then(() => {
     app.use((req, res) => {
-      res.json(messages.NOT_FOUND)
+      res.status(404).json(messages.NOT_FOUND)
     })
 
     app.listen(port, () => {

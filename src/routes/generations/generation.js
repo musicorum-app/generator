@@ -1,12 +1,12 @@
-import { authenticationMiddleware } from '../middlewares'
-import messages from '../messages'
+import { authenticationMiddleware } from '../../middlewares'
+import messages from '../../messages'
 
 export default ({
   router,
   database,
   applicationsController
 }) => {
-  router.get('/generation/:id', authenticationMiddleware(applicationsController), async (req, res) => {
+  router.get('/generations/:id', authenticationMiddleware(applicationsController), async (req, res) => {
     const { id } = req.params
 
     const s = new Date().getTime()

@@ -37,4 +37,24 @@ export default class RedisController {
   getApplicationByKey (key) {
     return this.client.hgetall(`app:key:${key}`)
   }
+
+  async setTwitterTokenSecret (tokenId, tokenSecret) {
+    await this.client.set(`auth:twitter:ti:${tokenId}`, tokenSecret)
+    return this.client.expire(`auth:twitter:ti:${tokenId}`, 4 * 60 * 60)
+  }
+
+  getTwitterTokenSecret (tokenId) {
+    return this.client.get(`auth:twitter:ti:${tokenId}`)
+  }
+
+  async getTwitterUserCache (id) {
+    const exists = await this.client.exists(`user:twitter:${id}`)
+    if (exists === 0) return null
+    return this.client.hgetall(`user:twitter:${id}`)
+  }
+
+  async setTwitterUserCache (id, data) {
+    await this.client.hmset(`user:twitter:${id}`, data)
+    return this.client.expire(`user:twitter:${id}`, 4 * 60 * 60)
+  }
 }

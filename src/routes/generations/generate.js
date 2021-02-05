@@ -1,21 +1,22 @@
-import { authenticationMiddleware } from '../middlewares'
-import { generateEndpointJoi } from '../joi/generate'
-import messages from '../messages'
+import { authenticationMiddleware } from '../../middlewares'
+import { generateEndpointJoi } from '../../joi/generate'
+import messages from '../../messages'
 import { nanoid } from 'nanoid'
-import themes from '../themes'
-import { loadConfiguration } from '../utils'
-import { DataTypes } from 'sequelize'
+import themes from '../../themes'
+import { loadConfiguration } from '../../utils'
+import HTTPErrorMessage from '../../utils/HTTPErrorMessage'
 
 const config = loadConfiguration()
 
 export default (ctx) => {
   const {
+    logger,
     router,
     database,
-    applicationsController,
+    applicationsController
   } = ctx
 
-  router.post('/generate', authenticationMiddleware(applicationsController, true), async (req, res) => {
+  router.post('/generations/generate', authenticationMiddleware(applicationsController, true), async (req, res) => {
     const start = new Date().getTime()
     const id = nanoid(24)
 
@@ -33,7 +34,6 @@ export default (ctx) => {
           validation: error.details[0].message
         })
       }
-
 
       const {
         generation,
@@ -68,15 +68,21 @@ export default (ctx) => {
         appId: req.meta.app.id
       })
     } catch (e) {
+      if (e instanceof HTTPErrorMessage) {
+        return res.status(e.code).json(e.err)
+      }
+
+      res.status(500).json(messages.INTERNAL_ERROR)
       const duration = (new Date().getTime()) - start
       await database.insertGeneration({
         id,
-        status: true,
+        status: false,
         totalDuration: duration / 1000,
-        error: e,
+        error: e.toString(),
         appId: req.meta.app.id
       })
-      return res.status(500).json(messages.INTERNAL_ERROR)
+
+      logger.error(e)
     }
   })
 }

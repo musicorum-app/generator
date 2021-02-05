@@ -86,6 +86,29 @@ export default class DatabaseController {
       }
     })
 
+    this.models.User = this.client.define('User', {
+      id: {
+        type: DataTypes.STRING(24),
+        allowNull: false,
+        primaryKey: true
+      },
+      lastfmToken: {
+        type: DataTypes.TEXT
+      },
+      twitterToken: {
+        type: DataTypes.TEXT,
+        allowNull: false
+      },
+      twitterSecret: {
+        type: DataTypes.TEXT,
+        allowNull: false
+      },
+      twitterId: {
+        type: DataTypes.TEXT,
+        allowNull: false
+      }
+    })
+
     // this.models.Generation.associate = models => {
     //   console.log('aa')
     this.models.Generation.belongsTo(this.models.Application, {
@@ -152,5 +175,19 @@ export default class DatabaseController {
       ]
     })
     return result
+  }
+
+  getUserByTwitterId (id) {
+    if (!this.checkReady()) return null
+    return this.models.User.findOne({
+      where: {
+        twitterId: id
+      }
+    })
+  }
+
+  async createUserWithTwitter (usr) {
+    if (!this.checkReady()) return null
+    return (await (this.models.User.build(usr)).save()).dataValues
   }
 }
