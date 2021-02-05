@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec babel-node -r dotenv/config src/index.js",
+    "dev": "babel-node -r dotenv/config src/index.js",
     "clean": "rm -rf ./dist && mkdir dist",
     "build": "npm run clean && babel src -d dist"
   },
@@ -22,9 +22,16 @@
     "chalk": "^4.1.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "joi": "^17.3.0",
+    "lastfm-node-client": "^2.2.0",
+    "nanoid": "^3.1.20",
     "node-fetch": "^2.6.1",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.5.0",
     "tedis": "^0.1.12",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "yaml": "^1.10.0"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",

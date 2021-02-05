@@ -1,8 +1,13 @@
+import { authenticationMiddleware } from '../middlewares'
+
 export default ({
   router,
-  logger
+  workersController,
+  applicationsController
 }) => {
-  router.get('/workers', (req, res) => {
-    res.send('OK')
+  router.get('/workers', authenticationMiddleware(applicationsController), async (req, res) => {
+    res.json({
+      workers: workersController.workers
+    })
   })
 }
