@@ -12,10 +12,12 @@ export default class DatabaseController {
   }
 
   async connect () {
-    this.client = new Sequelize(process.env.SQL_DB, process.env.SQL_USER, process.env.SQL_PASS, {
-      dialect: 'postgres',
-      host: process.env.SQL_HOST,
-      port: parseInt(process.env.SQL_PORT),
+    const uri = process.env.SQL_URI
+    if (!uri) {
+      this.logger.error('SQL_URI environment var not defined.')
+      process.exit(2)
+    }
+    this.client = new Sequelize(uri, {
       logging: m => this.logger.debug(`Database: ${m}`)
     })
 
