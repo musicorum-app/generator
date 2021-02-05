@@ -126,10 +126,12 @@ export default class DatabaseController {
   }
 
   async insertGeneration (generation) {
+    if (!this.checkReady()) return null
     await (this.models.Generation.build(generation)).save()
   }
 
   async getGeneration (id) {
+    if (!this.checkReady()) return null
     const [result] = await this.models.Generation.findAll({
       where: {
         id

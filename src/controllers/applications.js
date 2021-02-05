@@ -10,8 +10,23 @@ export default class ApplicationsController {
   }
 
   async getApplicationByKey (key) {
-    return this.database.findApplicationByKey({
-      key
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async resolve => {
+      const redisSearch = await this.redis.getApplicationByKey(key)
+      if (redisSearch && redisSearch !== {} && redisSearch.id) {
+        resolve({
+          ...redisSearch,
+          key
+        })
+      }
+
+      const find = await this.database.findApplicationByKey({
+        key
+      })
+      resolve(find)
+      if (find) {
+        this.redis.setApplication(find)
+      }
     })
   }
 }
