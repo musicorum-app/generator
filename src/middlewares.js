@@ -25,5 +25,5 @@ export const authenticationMiddleware = (applicationsController, showSuccess = f
   req.meta.app = app
 
   next()
-  console.log('Authentication middleware took ' + ((new Date().getTime()) / s) + 'ms.')
+  console.log('Authentication middleware took ' + ((new Date().getTime()) - s) + 'ms.')
 }
