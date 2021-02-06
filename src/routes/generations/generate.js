@@ -37,7 +37,8 @@ export default (ctx) => {
 
       const {
         generation,
-        worker
+        worker,
+        correctPeriod
       } = await themes.grid.instance.generate(value, id, ctx)
 
       const duration = (new Date().getTime()) - start
@@ -53,7 +54,8 @@ export default (ctx) => {
         },
         result: config.result_url + generation.file,
         total_duration: duration / 1000,
-        render_duration: generation.duration
+        render_duration: generation.duration,
+        correct_period: correctPeriod
       }
 
       res.json(result)
@@ -82,7 +84,7 @@ export default (ctx) => {
         appId: req.meta.app.id
       })
 
-      logger.error(e)
+      logger.error(e.toString())
     }
   })
 }
