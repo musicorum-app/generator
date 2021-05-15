@@ -34,6 +34,10 @@ export default class GridTheme extends Theme {
       }
     }
 
+    if (Array.isArray(options.period)) {
+      options.period = options.period.map(p => ~~p)
+    }
+
     let isCorrectPeriod = true
     const limit = options.rows * options.columns
 
@@ -57,7 +61,7 @@ export default class GridTheme extends Theme {
 
         console.log(resources)
 
-        result.data.tiles = items.map((a, i) => ({
+        result.data.tiles = result.data.items.map((a, i) => ({
           ...a,
           image: resources[i] && resources[i].cover ? resources[i].cover : a.image
         }))

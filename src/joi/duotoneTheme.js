@@ -1,5 +1,8 @@
 import Joi from 'joi'
 import { periodResolverJoi, typesResolverJoi } from './common'
+import { loadConfiguration } from '../utils'
+
+const config = loadConfiguration().themes.duotone
 
 export const duotoneThemeJoi = Joi.object({
   period: periodResolverJoi,
@@ -7,16 +10,6 @@ export const duotoneThemeJoi = Joi.object({
   type: typesResolverJoi,
 
   palette: Joi.string()
-    .valid(...[
-      'PURPLISH',
-      'NATURAL',
-      'DIVERGENT',
-      'SUN',
-      'YELLISH',
-      'HORROR',
-      'SEA',
-      'REEN',
-      'NEON'
-    ])
+    .valid(...Object.keys(config.palettes))
     .required()
 })

@@ -4,6 +4,8 @@
     "scrobblesText": "LAST {{period}} • {{count}} SCROBBLE",
     "scrobblesText_customPeriod": "{{count}} SCROBBLE",
     "scrobblesText_plural": "LAST {{period}} • {{count}} SCROBBLES",
-    "scrobblesText_customPeriod_plural": "{{count}} SCROBBLES"
+    "scrobblesText_customPeriod_plural": "{{count}} SCROBBLES",
+    "scrobblesText_overall": "ALL TIME • {{count}} SCROBBLE",
+    "scrobblesText_overall_plural": "ALL TIME • {{count}} SCROBBLES"
   }
 }

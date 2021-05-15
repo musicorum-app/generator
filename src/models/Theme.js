@@ -15,19 +15,7 @@ export default class Theme {
   }
 
   async getUserData (username) {
-    const cache = await this.ctx.redis.getLastfmUserCache(username)
-    if (!cache) return cache
-
-    const _user = await LastfmAPI.getUserInfo(username)
-    const user = {
-      username: _user.name,
-      name: _user.realname,
-      scrobbles: _user.playcount,
-      image: _user.image[3]['#text'] || defaultUserImage
-    }
-
-    this.ctx.redis.setLastfmUserCache(username, user)
-    return user
+    return this.ctx.lastfm.getCachedUserInfo(username)
   }
 
   async generate (data, id) {

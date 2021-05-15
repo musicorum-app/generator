@@ -1,9 +1,13 @@
 import LastFm from 'lastfm-node-client'
-import { defaultAlbumImage, defaultArtistImage, defaultTrackImage } from '../constants'
+import { defaultAlbumImage, defaultArtistImage, defaultTrackImage, defaultUserImage } from '../constants'
 
 const lastfm = new LastFm(process.env.LASTFM_KEY)
 
 export default class LastfmAPI {
+  constructor (ctx) {
+    this.ctx = ctx
+  }
+
   static async getAlbumsCharts (user, period, limit) {
     if (Array.isArray(period)) {
       const chart = await lastfm.userGetWeeklyAlbumChart({
@@ -134,5 +138,52 @@ export default class LastfmAPI {
 
   static async getUserInfo (user) {
     return lastfm.userGetInfo({ user }).then(r => r.user)
+  }
+
+  static async getTotalScrobblesFromTimestamp (user, from, to) {
+    const { recenttracks } = await lastfm.userGetRecentTracks({
+      user,
+      from,
+      to,
+      limit: 1
+    })
+    return parseInt(recenttracks['@attr'].total)
+  }
+
+  async getCachedUserInfo (username) {
+    const cache = await this.ctx.redis.getLastfmUserCache(username)
+    if (cache && cache !== {} && !!cache.name) return cache
+
+    const _user = await LastfmAPI.getUserInfo(username)
+    const user = {
+      username: _user.name,
+      name: _user.realname,
+      scrobbles: _user.playcount,
+      image: _user.image[3]['#text'] || defaultUserImage
+    }
+
+    this.ctx.redis.setLastfmUserCache(username, user)
+    return user
+  }
+
+  async getTotalScrobbles (user, period) {
+    if (period === 'OVERALL') {
+      return parseInt((await this.getCachedUserInfo(user)).scrobbles)
+    }
+
+    if (Array.isArray(period)) {
+      return LastfmAPI.getTotalScrobblesFromTimestamp(user, ...period)
+    }
+
+    const seconds = {
+      '7DAY': 604800,
+      '1MONTH': 2592000,
+      '3MONTH': 7776000,
+      '6MONTH': 15552000,
+      '12MONTH': 31536000
+    }
+
+    const now = ~~(new Date().getTime() / 1000)
+    return LastfmAPI.getTotalScrobblesFromTimestamp(user, now - seconds[period], now)
   }
 }

@@ -6,5 +6,13 @@
     "album_plural": "Albums",
     "track": "Track",
     "track_plural": "Tracks"
+  },
+  "periodsNormalized": {
+    "7day":  "Week",
+    "1month": "Month",
+    "3month":  "3 months",
+    "6month": "6 months",
+    "12month":  "Year",
+    "overall": "All time"
   }
 }
