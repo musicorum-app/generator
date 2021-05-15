@@ -27,8 +27,7 @@ export const postSentryHandler = (app) => {
 
   app.use(Sentry.Handlers.errorHandler())
 
-  app.use((_, req, res) => {
-    res.statusCode = 500
-    res.end(res.sentry + '\n')
+  app.use((error, req, res, next) => {
+    return res.status(500).json({ error: error.toString() })
   })
 }

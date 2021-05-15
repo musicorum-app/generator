@@ -2,9 +2,9 @@ import { authenticationMiddleware } from '../../middlewares'
 import { generateEndpointJoi } from '../../joi/generate'
 import messages from '../../messages'
 import { nanoid } from 'nanoid'
-import themes from '../../themes'
 import { loadConfiguration } from '../../utils'
 import HTTPErrorMessage from '../../utils/HTTPErrorMessage'
+import * as Sentry from '@sentry/node'
 
 const config = loadConfiguration()
 
@@ -85,6 +85,8 @@ export default (ctx) => {
       if (e instanceof HTTPErrorMessage) {
         return res.status(e.code).json(e.err)
       }
+
+      Sentry.captureException(e)
 
       res.status(500).json(messages.INTERNAL_ERROR)
       const duration = (new Date().getTime()) - start
