@@ -22,10 +22,20 @@ export default class Worker {
     return fetch(this.url + 'generate', {
       method: 'POST',
       headers: {
-        'content-type': 'application.json'
+        'content-type': 'application/json'
       },
       body: JSON.stringify(payload)
     })
       .then(r => r.json())
+  }
+
+  get formattedJson () {
+    return {
+      name: this.name,
+      engine: this.engine,
+      scheme: this.scheme,
+      version: this.version,
+      themes: this.themes
+    }
   }
 }

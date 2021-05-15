@@ -2,8 +2,8 @@ themes:
   grid:
     tile_size: 160
 
-result_url: https://result.musicorumapp.com/
-#result_url: http://localhost:7060/
+#result_url: https://result.musicorumapp.com/
+result_url: http://localhost:5000/
 #result_url: file:///D:/Projects/Musicorum/share/export/
 
 resource_url: https://resource.musicorumapp.com/

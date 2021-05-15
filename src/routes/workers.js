@@ -7,7 +7,7 @@ export default ({
 }) => {
   router.get('/workers', authenticationMiddleware(applicationsController), async (req, res) => {
     res.json({
-      workers: workersController.workers
+      workers: workersController.workers.map(w => w.formattedJson)
     })
   })
 }

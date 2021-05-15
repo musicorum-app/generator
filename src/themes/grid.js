@@ -4,11 +4,16 @@ import messages from '../messages'
 import ResourcesAPI from '../apis/resources'
 import { defaultArtistImage, defaultTrackImage } from '../constants'
 import LastfmAPI from '../apis/lastfm'
+import Theme from '../models/Theme'
 
 const config = loadConfiguration().themes.grid
 
-export default class GridTheme {
-  static async getWorkerData ({
+export default class GridTheme extends Theme {
+  constructor (ctx) {
+    super('grid', ctx)
+  }
+
+  async getWorkerData ({
     options,
     story,
     user
@@ -92,21 +97,6 @@ export default class GridTheme {
     return {
       result,
       correctPeriod: isCorrectPeriod
-    }
-  }
-
-  static async generate (data, id, ctx) {
-    const worker = ctx.workersController.getWorkerByTheme('grid')
-
-    const {
-      result,
-      correctPeriod
-    } = await GridTheme.getWorkerData(data, id, ctx)
-
-    return {
-      generation: await worker.generate('grid', result),
-      worker,
-      correctPeriod
     }
   }
 }

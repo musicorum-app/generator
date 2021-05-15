@@ -34,8 +34,18 @@ export default class RedisController {
     })
   }
 
-  getApplicationByKey (key) {
+  async getApplicationByKey (key) {
     return this.client.hgetall(`app:key:${key}`)
+  }
+
+  async setLastfmUserCache (user, content) {
+    const key = `lastfm:user:${user.toLowerCase()}`
+    await this.client.hmset(key, content)
+    return this.client.expire(key, 8 * 60 * 60)
+  }
+
+  async getLastfmUserCache (user) {
+    return this.client.hgetall(`lastfm:user:${user.toLowerCase()}`)
   }
 
   async setTwitterTokenSecret (tokenId, tokenSecret) {
@@ -43,7 +53,7 @@ export default class RedisController {
     return this.client.expire(`auth:twitter:ti:${tokenId}`, 4 * 60 * 60)
   }
 
-  getTwitterTokenSecret (tokenId) {
+  async getTwitterTokenSecret (tokenId) {
     return this.client.get(`auth:twitter:ti:${tokenId}`)
   }
 

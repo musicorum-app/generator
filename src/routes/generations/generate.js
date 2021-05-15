@@ -39,7 +39,19 @@ export default (ctx) => {
         generation,
         worker,
         correctPeriod
-      } = await themes.grid.instance.generate(value, id, ctx)
+      } = await ctx.themes[value.theme].instance.generate(value, id, ctx)
+
+      if (!generation) {
+        throw new HTTPErrorMessage(messages.INTERNAL_ERROR)
+      }
+
+      if (generation.error) {
+        throw new HTTPErrorMessage(generation)
+      }
+
+      if (!generation.file) {
+        throw new HTTPErrorMessage(messages.INTERNAL_ERROR)
+      }
 
       const duration = (new Date().getTime()) - start
 
@@ -84,7 +96,7 @@ export default (ctx) => {
         appId: req.meta.app.id
       })
 
-      logger.error(e.toString())
+      logger.error('Generation error:', e)
     }
   })
 }

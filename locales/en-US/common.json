@@ -1,0 +1,10 @@
+{
+  "types": {
+    "artist": "Artist",
+    "artist_plural": "Artists",
+    "album": "Album",
+    "album_plural": "Albums",
+    "track": "Track",
+    "track_plural": "Tracks"
+  }
+}

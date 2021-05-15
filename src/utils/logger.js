@@ -10,9 +10,10 @@ const setupLogger = () => {
     const getLabel = i => i ? ` [${i}]` : ''
     logger.add(new winston.transports.Console({
       format: winston.format.combine(
+        winston.format.errors({ stack: true }),
         winston.format.colorize(),
         winston.format.printf(
-          info => `${info.level} ${getLabel(info.label)}| ${info.message}`
+          info => `${info.level} ${getLabel(info.label)}| ${info.message}` + (info.stack ? `\n${info.stack}` : '')
         )
       ),
       level

@@ -26,23 +26,24 @@ export default class LastfmAPI {
           }))
       }
     } else {
+      const res = await lastfm.userGetTopAlbums({
+        user,
+        limit,
+        period: period.toLowerCase()
+      })
+
       return {
         isFromWeekly: false,
         correctPeriod: true,
-        items: await lastfm.userGetTopAlbums({
-          user,
-          limit,
-          period: period.toLowerCase()
-        })
-          .then(r => r.topalbums.album
-            .slice(0, limit)
-            .map(a => ({
-              name: a.name,
-              artist: a.artist.name,
-              playcount: parseInt(a.playcount),
-              image: a.image[3]['#text'] && a.image[3]['#text'] !== '' ? a.image[3]['#text'] : defaultAlbumImage
-            }))
-          )
+        attr: res.topalbums['@attr'],
+        items: res.topalbums.album
+          .slice(0, limit)
+          .map(a => ({
+            name: a.name,
+            artist: a.artist.name,
+            playcount: parseInt(a.playcount),
+            image: a.image[3]['#text'] && a.image[3]['#text'] !== '' ? a.image[3]['#text'] : defaultAlbumImage
+          }))
       }
     }
   }
@@ -129,5 +130,9 @@ export default class LastfmAPI {
           )
       }
     }
+  }
+
+  static async getUserInfo (user) {
+    return lastfm.userGetInfo({ user }).then(r => r.user)
   }
 }

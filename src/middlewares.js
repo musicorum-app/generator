@@ -1,7 +1,7 @@
 import messages from './messages'
 
 export const authenticationMiddleware = (applicationsController, showSuccess = false) => async (req, res, next) => {
-  const s = new Date().getTime()
+  // const s = new Date().getTime()
   const handleResponse = e => showSuccess ? {
     ...e,
     success: false
@@ -26,5 +26,5 @@ export const authenticationMiddleware = (applicationsController, showSuccess = f
   req.meta.authType = prefix
 
   next()
-  console.log('Authentication middleware took ' + ((new Date().getTime()) - s) + 'ms.')
+  // console.log('Authentication middleware took ' + ((new Date().getTime()) - s) + 'ms.')
 }

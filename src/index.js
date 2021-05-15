@@ -12,6 +12,9 @@ import ApplicationsController from './controllers/applications'
 import WorkersController from './controllers/workers'
 import TwitterAuthController from './controllers/twitter'
 import UsersController from './controllers/users'
+import { generateThemes } from './themes'
+import { loadLocales } from './locales'
+import { initSentry, postSentryHandler } from './utils/sentry'
 
 const logger = setupLogger()
 const database = new DatabaseController({ logger })
@@ -29,6 +32,7 @@ ctx.applicationsController = new ApplicationsController(ctx)
 ctx.workersController = new WorkersController(ctx)
 ctx.twitterController = new TwitterAuthController(ctx)
 ctx.usersController = new UsersController(ctx)
+ctx.themes = generateThemes(ctx)
 
 logger.info(`Starting Musicorum API ${version}`)
 
@@ -40,6 +44,10 @@ app.use((_, res, next) => {
   res.append('Musicorum-API-Version', version)
   next()
 })
+
+const loadAsyncContexts = async () => {
+  ctx.i18n = await loadLocales(ctx)
+}
 
 const loadRoutes = async () => {
   const router = express.Router()
@@ -54,12 +62,19 @@ const loadRoutes = async () => {
 
 const port = process.env.PORT || 80
 
-loadRoutes()
+initSentry(app, logger)
+
+loadAsyncContexts()
+  .then(loadRoutes)
   .then(router => app.use(router))
   .then(() => {
+    postSentryHandler(app)
+
     app.use((req, res) => {
       res.status(404).json(messages.NOT_FOUND)
     })
+
+    console.log(ctx.i18n.t('common:test'))
 
     app.listen(port, () => {
       logger.info(`Server listening on port ${chalk.cyan(':' + port)}`)

@@ -1,0 +1,9 @@
+{
+  "duotone": {
+    "title": "MOST LISTENED {{type}}",
+    "scrobblesText": "LAST {{period}} • {{count}} SCROBBLE",
+    "scrobblesText_customPeriod": "{{count}} SCROBBLE",
+    "scrobblesText_plural": "LAST {{period}} • {{count}} SCROBBLES",
+    "scrobblesText_customPeriod_plural": "{{count}} SCROBBLES"
+  }
+}

@@ -1,5 +1,7 @@
 import { gridThemeJoi } from './gridTheme'
+import { duotoneThemeJoi } from './duotoneTheme'
 
 export const themeJoi = {
-  grid: gridThemeJoi
+  grid: gridThemeJoi,
+  duotone: duotoneThemeJoi
 }

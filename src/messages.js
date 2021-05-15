@@ -1,4 +1,4 @@
-const createMessage = (code, error, message) => ({
+export const createMessage = (code, error, message) => ({
   code,
   error,
   message
@@ -14,5 +14,6 @@ export default {
   INVALID_OPTIONS: createMessage(400, 'INVALID_OPTIONS', 'Invalid theme options. See \'validation\' for more.'),
   NO_AVAILABLE_WORKER: createMessage(503, 'NO_AVAILABLE_WORKER', 'There is no available worker for that theme.'),
   INVALID_TOKEN_ID: createMessage(400, 'INVALID_TOKEN_ID', 'Invalid token id.'),
-  INVALID_TOKENS: createMessage(400, 'INVALID_TOKENS', 'Invalid authentication tokens.')
+  INVALID_TOKENS: createMessage(400, 'INVALID_TOKENS', 'Invalid authentication tokens.'),
+  NOT_IMPLEMENTED: createMessage(501, 'NOT_IMPLEMENTED', 'This action wasn\'t implemented.')
 }
