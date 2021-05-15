@@ -17,7 +17,7 @@ export default class GridTheme extends Theme {
     options,
     story,
     user
-  }, id, { lastfm }) {
+  }, id) {
     const result = {
       id,
       story,
