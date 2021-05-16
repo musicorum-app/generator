@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node'
 import * as Tracing from '@sentry/tracing'
+import messages from '../messages'
 
 const sentryEnabled = !!process.env.SENTRY_DSN
 
@@ -27,7 +28,11 @@ export const postSentryHandler = (app) => {
 
   app.use(Sentry.Handlers.errorHandler())
 
-  app.use((error, req, res, next) => {
-    return res.status(500).json({ error: error.toString() })
+  app.use((error, req, res) => {
+    Sentry.captureException(error)
+    return res.status(500).json({
+      ...messages.INTERNAL_ERROR,
+      e: error.toString()
+    })
   })
 }

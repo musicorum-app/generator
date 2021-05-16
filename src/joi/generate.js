@@ -23,7 +23,8 @@ export const generateEndpointJoi = Joi.object({
   story: Joi.bool()
     .required(),
 
-  language: Joi.string(),
+  language: Joi.string()
+    .valid(...['en-US']),
 
   hide_username: Joi.bool()
     .required(),

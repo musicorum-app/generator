@@ -7,5 +7,19 @@
     "scrobblesText_customPeriod_plural": "{{count}} SCROBBLES",
     "scrobblesText_overall": "ALL TIME • {{count}} SCROBBLE",
     "scrobblesText_overall_plural": "ALL TIME • {{count}} SCROBBLES"
+  },
+  "tops": {
+    "title": "My musical stats",
+    "title_7day": "My last week on music",
+    "title_1month": "My last month on music",
+    "title_3month": "My last 3 months on music",
+    "title_6month": "My last 6 months on music",
+    "title_12month": "My last year on music",
+    "title_overall": "My entire time on music",
+    "scrobblesText": "scrobble",
+    "scrobblesText_plural": "scrobbles",
+    "moduleTitle_album": "Top album",
+    "moduleTitle_artist": "Top artist",
+    "moduleTitle_track": "Top track"
   }
 }

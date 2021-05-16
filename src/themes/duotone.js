@@ -16,8 +16,8 @@ export default class DuotoneTheme extends Theme {
     story,
     hide_username: hideUsername,
     user
-  }, id) {
-    const typeTranslated = this.ctx.i18n.t(`common:types.${options.type.toLowerCase()}`, { context: 'plural' }).toUpperCase()
+  }, id, t) {
+    const typeTranslated = t(`common:types.${options.type.toLowerCase()}`, { context: 'plural' }).toUpperCase()
     const result = {
       id,
       story,
@@ -25,7 +25,7 @@ export default class DuotoneTheme extends Theme {
       hide_username: hideUsername,
       data: {
         items: [],
-        title: this.ctx.i18n.t('themes:duotone.title', { type: typeTranslated }),
+        title: t('themes:duotone.title', { type: typeTranslated }),
         palette: config.palettes[options.palette]
       }
     }
@@ -91,9 +91,9 @@ export default class DuotoneTheme extends Theme {
 
     const isCustomPeriod = Array.isArray(options.period)
 
-    result.data.subtitle = this.ctx.i18n.t('themes:duotone.scrobblesText', {
+    result.data.subtitle = t('themes:duotone.scrobblesText', {
       count: scrobbles,
-      period: !isCustomPeriod ? this.ctx.i18n.t(`common:periodsNormalized.${options.period.toLowerCase()}`).toUpperCase() : '',
+      period: !isCustomPeriod ? t(`common:periodsNormalized.${options.period.toLowerCase()}`).toUpperCase() : '',
       context: isCustomPeriod ? 'customPeriod' : options.period === 'OVERALL' ? 'overall' : null
     })
 

@@ -25,10 +25,12 @@ export default class Theme {
       data.userData = await this.getUserData(data.user)
     }
 
+    const fixedT = this.ctx.i18n.getFixedT(data.language)
+
     const {
       result,
       correctPeriod
-    } = await this.getWorkerData(data, id)
+    } = await this.getWorkerData(data, id, fixedT)
 
     if (data.userData) {
       result.user = data.userData

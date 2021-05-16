@@ -39,6 +39,8 @@ export default class WorkersController {
       .then(r => r.json())
       .catch(e => {
         this.logger.warn(`Not possible to connect to worker url '${workerURL}' due to ` + e)
+        this.logger.warn('Attempting to connect again to worker.')
+        this.startLoopLookup(workerURL)
         return null
       })
 
@@ -46,6 +48,31 @@ export default class WorkersController {
 
     this.logger.info(`Worker '${metadata.name}' using '${metadata.engine} ${metadata.version}' setup done!`)
     this.workers.push(new Worker(url, metadata))
+  }
+
+  async startLoopLookup (workerURL) {
+    const url = handleURL(workerURL)
+
+    const interval = setInterval(async () => {
+      this.logger.debug(`Trying again to connect to worker at ${url}.`)
+
+      const metadata = await fetch(url + 'metadata', {
+        header: {
+          'content-type': 'application/json'
+        }
+      })
+        .then(r => r.json())
+        .catch(() => {
+          this.logger.debug(`Could not connect to worker at ${url}. Trying again in 5 minutes.`)
+          return null
+        })
+
+      if (metadata) {
+        clearInterval(interval)
+        await this.setupWorker(url)
+        this.setupThemes()
+      }
+    }, 5 * 60 * 1000)
   }
 
   setupThemes () {

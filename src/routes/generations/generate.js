@@ -46,7 +46,10 @@ export default (ctx) => {
       }
 
       if (generation.error) {
-        throw new HTTPErrorMessage(generation)
+        return res.status(generation.code).json({
+          ...generation,
+          from_worker: true
+        })
       }
 
       if (!generation.file) {
@@ -86,7 +89,14 @@ export default (ctx) => {
         return res.status(e.code).json(e.err)
       }
 
-      Sentry.captureException(e)
+      Sentry.captureException(e, {
+        contexts: {
+          generation: {
+            ID: id,
+            Theme: req.body.theme
+          }
+        }
+      })
 
       res.status(500).json(messages.INTERNAL_ERROR)
       const duration = (new Date().getTime()) - start
