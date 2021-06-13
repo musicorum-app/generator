@@ -45,6 +45,21 @@ const flags = {
   transgender: {
     colors: ['#5BCEFA', '#F5A9B8', '#fff', '#F5A9B8', '#5BCEFA'],
     rows: [1, 1, 1, 1, 1]
+  },
+  agender: {
+    colors: ['#000', '#858585', '#fff', '#90e344', '#fff', '#858585', '#000'],
+    rows: [1, 1, 1, 1, 1, 1, 1],
+    colorsToDraw: ['#000', '#bababa', '#fff', '#b9f484', '#fff', '#bababa', '#000']
+  },
+  unlabeled: {
+    colors: ['#75ff7e', '#fff', '#69cdff', '#ffa947'],
+    rows: [1, 1, 1, 1],
+    colorsToDraw: ['#defce0', '#fff', '#d9effa', '#fee0be']
+  },
+  aromantic: {
+    colors: ['#009609', '#b5ff5e', '#fff', '#a9a9a9', '#000'],
+    rows: [1, 1, 1, 1, 1],
+    colorsToDraw: ['#3ca542', '#a8d277', '#fff', '#a9a9a9', '#000']
   }
 }
 
@@ -66,7 +81,7 @@ module.exports = class PrideTheme extends Theme {
     const CANVAS_SIZE_X = COVER_SIZE * SIZE_X
     const CANVAS_SIZE_Y = COVER_SIZE * SIZE_Y
 
-    const albums = await lastfm.getList(user, 'albums', 'overall', 100)
+    const albums = await lastfm.getList(user, 'albums', 'overall', 140)
     console.log('request done.')
 
     const canvas = createCanvas(CANVAS_SIZE_X, CANVAS_SIZE_Y)
