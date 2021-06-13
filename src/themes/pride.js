@@ -47,12 +47,12 @@ const flags = {
     rows: [1, 1, 1, 1, 1]
   },
   agender: {
-    colors: ['#000', '#858585', '#fff', '#90e344', '#fff', '#858585', '#000'],
+    colors: ['#000', '#858585', '#fff', '#4eff3b', '#fff', '#858585', '#000'],
     rows: [1, 1, 1, 1, 1, 1, 1],
     colorsToDraw: ['#000', '#bababa', '#fff', '#b9f484', '#fff', '#bababa', '#000']
   },
   unlabeled: {
-    colors: ['#75ff7e', '#fff', '#69cdff', '#ffa947'],
+    colors: ['#4fff5b', '#fff', '#0fafff', '#ffa947'],
     rows: [1, 1, 1, 1],
     colorsToDraw: ['#defce0', '#fff', '#d9effa', '#fee0be']
   },
@@ -123,7 +123,7 @@ module.exports = class PrideTheme extends Theme {
       //     // .sort((a, b) => chroma.distance(a.color.hex(), b.color.hex(), 'rgb') - chroma.distance(b.color.hex(), a.color.hex(), 'rgb')))
       //   return
       // }
-      const invertLightness = selectedFlag === 'transgender' && i > 2
+      const invertLightness = (selectedFlag === 'transgender' && i > 2) || (selectedFlag === 'agender' && i > 3)
       images = images.filter(a => !!a)
         .sort((a, b) => differencer(colors[i], a, b))
       items.push(...images
