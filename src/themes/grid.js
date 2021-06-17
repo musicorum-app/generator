@@ -61,7 +61,7 @@ export default class GridTheme extends Theme {
 
         console.log(resources)
 
-        result.data.tiles = result.data.items.map((a, i) => ({
+        result.data.tiles = result.data.tiles.map((a, i) => ({
           ...a,
           image: resources[i] && resources[i].cover ? resources[i].cover : a.image
         }))
