@@ -98,7 +98,14 @@ module.exports = class Theme {
   }
 
   async loadUserImage (userObject, size) {
-    if (userObject.image[0]['#text']) return loadImage(LastFM.getBestImage(userObject.image, size))
+    if (userObject.image[0]['#text']) {
+      try {
+        return loadImage(LastFM.getBestImage(userObject.image, size))
+      } catch (e) {
+        console.error("Failed to fetch user image", e)
+      }
+    }
+    
     return this.musicorum.cacheFileManager.getImageFromCache('userDefault.png', 'https://lastfm.freetls.fastly.net/i/u/300x300/818148bf682d429dc215c1705eb27b98.png')
   }
 
