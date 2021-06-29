@@ -98,6 +98,7 @@ module.exports = class Theme {
   }
 
   async loadUserImage (userObject, size) {
+    console.log(`Fetching ${userObject.name} image`)
     if (userObject.image[0]['#text']) {
       try {
         return loadImage(LastFM.getBestImage(userObject.image, size))
