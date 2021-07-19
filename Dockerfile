@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --production
 COPY . .
-RUN prisma generate
+RUN npx prisma generate
 RUN npm run build
 EXPOSE 4030
 CMD npm start
