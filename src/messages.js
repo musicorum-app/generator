@@ -15,5 +15,6 @@ export default {
   NO_AVAILABLE_WORKER: createMessage(503, 'NO_AVAILABLE_WORKER', 'There is no available worker for that theme.'),
   INVALID_TOKEN_ID: createMessage(400, 'INVALID_TOKEN_ID', 'Invalid token id.'),
   INVALID_TOKENS: createMessage(400, 'INVALID_TOKENS', 'Invalid authentication tokens.'),
-  NOT_IMPLEMENTED: createMessage(501, 'NOT_IMPLEMENTED', 'This action wasn\'t implemented.')
+  NOT_IMPLEMENTED: createMessage(501, 'NOT_IMPLEMENTED', 'This action wasn\'t implemented.'),
+  USER_NOT_FOUND: createMessage(404, 'USER_NOT_FOUND', 'User not found.')
 }

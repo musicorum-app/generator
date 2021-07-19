@@ -1,5 +1,7 @@
 import LastFm from 'lastfm-node-client'
 import { defaultAlbumImage, defaultArtistImage, defaultTrackImage, defaultUserImage } from '../constants'
+import HTTPErrorMessage from '../utils/HTTPErrorMessage'
+import messages from '../messages'
 
 const lastfm = new LastFm(process.env.LASTFM_KEY)
 
@@ -154,16 +156,24 @@ export default class LastfmAPI {
     const cache = await this.ctx.redis.getLastfmUserCache(username)
     if (cache && cache !== {} && !!cache.name) return cache
 
-    const _user = await LastfmAPI.getUserInfo(username)
-    const user = {
-      username: _user.name,
-      name: _user.realname,
-      scrobbles: _user.playcount,
-      image: _user.image[3]['#text'] || defaultUserImage
-    }
+    try {
+      const _user = await LastfmAPI.getUserInfo(username)
+      const user = {
+        username: _user.name,
+        name: _user.realname,
+        scrobbles: _user.playcount,
+        image: _user.image[3]['#text'] || defaultUserImage
+      }
 
-    this.ctx.redis.setLastfmUserCache(username, user)
-    return user
+      this.ctx.redis.setLastfmUserCache(username, user)
+      return user
+    } catch (e) {
+      if (e.message === 'User not found') {
+        throw new HTTPErrorMessage(messages.USER_NOT_FOUND)
+      } else {
+        throw e
+      }
+    }
   }
 
   async getTotalScrobbles (user, period) {
