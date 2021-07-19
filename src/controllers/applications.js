@@ -14,7 +14,7 @@ export default class ApplicationsController {
     return new Promise(async resolve => {
       const redisSearch = await this.redis.getApplicationByKey(key)
       if (redisSearch && redisSearch !== {} && redisSearch.id) {
-        resolve({
+        return resolve({
           ...redisSearch,
           key
         })

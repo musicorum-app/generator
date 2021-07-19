@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("SQL_URI")
+}
+
+model Application {
+  id          String       @id @db.VarChar(16)
+  key         String       @db.VarChar(32)
+  name        String
+  secret      String       @db.VarChar(32)
+  created_at  String       @db.VarChar(16)
+  updated_at  String       @db.VarChar(16)
+  generations Generation[]
+}
+
+model Generation {
+  id              String      @id @db.VarChar(24)
+  status          Boolean
+  total_duration  Float
+  render_duration Float?
+  file            String?
+  theme           String?     @db.VarChar(32)
+  error           String?
+  app_id          String      @db.VarChar(16)
+  created_at      String      @db.VarChar(16)
+  updated_at      String      @db.VarChar(16)
+  application     Application @relation(fields: [app_id], references: [id])
+}
+
+model User {
+  id             String  @id @db.VarChar(24)
+  lastfm_token   String?
+  twitter_token  String?
+  twitter_secret String?
+  twitter_id     String?
+  created_at     String  @db.VarChar(16)
+  updated_at     String  @db.VarChar(16)
+}

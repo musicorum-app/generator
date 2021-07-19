@@ -16,6 +16,8 @@ export default ({
 
     if (!find || find === {}) return res.status(404).json(messages.INVALID_GENERATION_ID)
 
+    find.created_at = Number(find.created_at)
+
     res.json(find)
 
     console.log('Generation endpoint took ' + (new Date().getTime() - s) + 'ms')

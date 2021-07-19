@@ -19,6 +19,8 @@ export default (ctx) => {
   router.post('/generations/generate', authenticationMiddleware(applicationsController, true), async (req, res) => {
     const start = new Date().getTime()
     const id = nanoid(24)
+    let _generation = null
+    let _theme = null
 
     try {
       const { body } = req
@@ -26,6 +28,8 @@ export default (ctx) => {
         value,
         error
       } = generateEndpointJoi.validate(body)
+
+      _theme = value.theme
 
       if (error) {
         return res.status(400).json({
@@ -73,17 +77,17 @@ export default (ctx) => {
         correct_period: correctPeriod
       }
 
-      res.json(result)
-
-      await database.insertGeneration({
+      _generation = {
         id,
         status: true,
-        totalDuration: duration / 1000,
-        renderDuration: generation.duration,
+        total_duration: duration / 1000,
+        render_duration: generation.duration,
         file: generation.file,
-        theme: value.theme,
-        appId: req.meta.app.id
-      })
+        theme: _theme,
+        app_id: req.meta.app.id
+      }
+
+      res.json(result)
     } catch (e) {
       if (e instanceof HTTPErrorMessage) {
         return res.status(e.code).json(e.err)
@@ -100,15 +104,23 @@ export default (ctx) => {
 
       res.status(500).json(messages.INTERNAL_ERROR)
       const duration = (new Date().getTime()) - start
-      await database.insertGeneration({
+      _generation = {
+        ..._generation,
         id,
+        theme: _theme,
         status: false,
-        totalDuration: duration / 1000,
+        total_duration: duration / 1000,
         error: e.toString(),
-        appId: req.meta.app.id
-      })
+        app_id: req.meta.app.id
+      }
 
       logger.error('Generation error:', e)
     }
+
+    await database.insertGeneration({
+      ..._generation,
+      created_at: new Date().getTime().toString(),
+      updated_at: new Date().getTime().toString()
+    })
   })
 }
